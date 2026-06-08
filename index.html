@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الغرفة السرية - نسخة المجلدات المتقدمة (V9)</title>
+    <title>الغرفة السرية - (V9)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root { 
@@ -181,6 +181,7 @@
             position: relative;
             animation: fadeIn 0.3s ease-in-out;
             transition: 0.3s border;
+            order: 2; /* ده عشان الرسالة العادية تفضل تحت الرسالة المثبتة */
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -189,6 +190,7 @@
             border: 2px solid var(--warning) !important;
             box-shadow: 0 0 10px rgba(243, 156, 18, 0.3) !important;
             background-color: rgba(243, 156, 18, 0.05);
+            order: 1 !important; /* ده عشان الرسالة تطلع في الأول خالص فوق */
         }
         .pinned-badge {
             display: none;
@@ -250,7 +252,7 @@
         .input-area { display: flex; gap: 8px; padding: 10px 0 0 0; align-items: flex-end; }
         textarea { 
             flex: 1; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; 
-            padding: 10px; resize: none; height: 45px; max-height: 120px; box-sizing: border-box; font-family: inherit; overflow-y: auto;
+            padding: 10px; resize: none; height: 60px; max-height: 250px; box-sizing: border-box; font-family: inherit; overflow-y: auto;
         }
         body.light-mode textarea { background: #fff; color: #333; border: 1px solid #ccc; }
         .msg-img { max-width: 100%; max-height: 250px; border-radius: 6px; cursor: zoom-in; margin-top: 5px; transition: 0.3s; }
@@ -336,6 +338,16 @@
                 <input type="file" id="pwa-file-upload" accept=".html,.htm,.txt" style="display: none;" onchange="readPwaFile(event)">
                 <button onclick="document.getElementById('pwa-file-upload').click()" style="flex: 1; background: var(--primary); color: white; padding: 10px; font-size: 14px;">📁 اختيار ملف</button>
             </div>
+            
+            <div style="margin-bottom: 15px;">
+                <input type="file" id="pwa-icon-upload" accept="image/*" style="display: none;" onchange="readPwaIcon(event)">
+                <button onclick="document.getElementById('pwa-icon-upload').click()" style="width: 100%; background: var(--folder-bg); color: white; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid #555; cursor: pointer;">🖼️ اختيار صورة للأيقونة (اختياري)</button>
+                <div id="pwa-icon-preview" style="display: none; margin-top: 10px; text-align: center;">
+                    <img id="pwa-icon-img" src="" style="width: 50px; height: 50px; border-radius: 8px; border: 2px solid var(--primary); object-fit: cover;">
+                    <span style="font-size: 12px; color: var(--accent); display: block; margin-top: 5px;">تم ضبط الصورة بنجاح ✔️</span>
+                </div>
+            </div>
+
             <button onclick="generatePWAZip()" style="width: 100%; background: var(--warning); color: #000; padding: 12px; font-size: 16px;">⚡ توليد 6 ملفات (ZIP)</button>
         </div>
     </div>
@@ -371,11 +383,11 @@
 
         <div class="input-area">
             <input type="file" id="file-upload" style="display:none;" multiple>
-            <button style="background: var(--primary); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 45px;" onclick="document.getElementById('file-upload').click()" title="إرفاق ملف">📎</button>
-            <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 45px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
-            <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 45px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
+            <button style="background: var(--primary); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="document.getElementById('file-upload').click()" title="إرفاق ملف">📎</button>
+            <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
+            <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
             <textarea id="msg-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..."></textarea>
-            <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 45px;" id="send-btn">إرسال</button>
+            <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 60px;" id="send-btn">إرسال</button>
         </div>
     </div>
 
@@ -624,7 +636,7 @@
         /* --- نظام المحادثة ورفع الملفات --- */
         const msgInput = document.getElementById('msg-input');
         msgInput.addEventListener('input', function() {
-            this.style.height = '45px';
+            this.style.height = '60px';
             this.style.height = (this.scrollHeight) + 'px';
         });
 
@@ -633,7 +645,7 @@
             if(txt) {
                 roomRef.push({type:"text", val:txt, time:Date.now(), pinned: false});
                 msgInput.value = "";
-                msgInput.style.height = '45px'; 
+                msgInput.style.height = '60px'; 
             }
         }
 
@@ -662,7 +674,7 @@
                     pinned: false
                 });
                 document.getElementById('msg-input').value = "";
-                document.getElementById('msg-input').style.height = '45px';
+                document.getElementById('msg-input').style.height = '60px';
             };
             reader.readAsDataURL(blob);
         }
@@ -687,7 +699,7 @@
                     pinned: false
                 });
                 document.getElementById('msg-input').value = "";
-                document.getElementById('msg-input').style.height = '45px';
+                document.getElementById('msg-input').style.height = '60px';
             };
             reader.readAsDataURL(blob);
         }
@@ -1013,6 +1025,34 @@
         };
 
         /* --- أكواد صانع PWA --- */
+        let customPwaIcon192 = null;
+        let customPwaIcon512 = null;
+
+        function readPwaIcon(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas192 = document.createElement('canvas');
+                    canvas192.width = 192; canvas192.height = 192;
+                    canvas192.getContext('2d').drawImage(img, 0, 0, 192, 192);
+                    customPwaIcon192 = canvas192.toDataURL('image/png').split(',')[1];
+                    
+                    const canvas512 = document.createElement('canvas');
+                    canvas512.width = 512; canvas512.height = 512;
+                    canvas512.getContext('2d').drawImage(img, 0, 0, 512, 512);
+                    customPwaIcon512 = canvas512.toDataURL('image/png').split(',')[1];
+
+                    document.getElementById('pwa-icon-preview').style.display = 'block';
+                    document.getElementById('pwa-icon-img').src = e.target.result;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function pastePwaCode() {
             if (navigator.clipboard && navigator.clipboard.readText) {
                 navigator.clipboard.readText().then(t => {
@@ -1097,9 +1137,9 @@
             // 4. ملف offline.html للطوارئ
             zip.file("offline.html", "<!DOCTYPE html><html lang='ar' dir='rtl'><head><meta charset='UTF-8'><title>غير متصل</title></head><body style='text-align:center; padding:50px; font-family:sans-serif;'><h2>أنت غير متصل بالإنترنت 🌐❌</h2><p>يرجى التحقق من اتصالك والمحاولة مجدداً.</p></body></html>");
 
-            // 5 و 6. الأيقونات
-            zip.file("icon-192.png", createIconBase64(192).split(',')[1], {base64: true});
-            zip.file("icon-512.png", createIconBase64(512).split(',')[1], {base64: true});
+            // 5 و 6. الأيقونات (لو رافع صورة هتتطبق هنا فوراً، لو لأ هياخد الأيقونة الافتراضية المكتوب عليها PWA)
+            zip.file("icon-192.png", customPwaIcon192 || createIconBase64(192).split(',')[1], {base64: true});
+            zip.file("icon-512.png", customPwaIcon512 || createIconBase64(512).split(',')[1], {base64: true});
 
             // توليد الملف المضغوط وتحميله
             zip.generateAsync({type:"blob"}).then(function(content) {
