@@ -57,8 +57,9 @@
         #theme-selector { left: 20px; background: var(--primary); outline: none; border: none; appearance: none; text-align: center; padding: 8px 20px; font-family: inherit;}
         #open-pwa-btn { left: 180px; background: var(--purple); }
         #open-calc-btn { left: 320px; background: #2c3e50; }
-        #export-btn { left: 470px; background: #009688; display: none; }
-        #import-btn { left: 590px; background: #607d8b; display: none; }
+        #open-html-viewer-btn { left: 470px; background: #e84393; }
+        #export-btn { left: 620px; background: #009688; display: none; }
+        #import-btn { left: 760px; background: #607d8b; display: none; }
         #logout-btn { right: 20px; background: var(--danger); display: none; }
         #clear-chat-btn { right: 120px; background: var(--warning); display: none; }
         
@@ -303,6 +304,9 @@
             position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: var(--danger); font-weight: bold; z-index: 10;
         }
 
+        /* --- ستايل عارض HTML الجديد --- */
+        body.light-mode #html-viewer-input { background: #fff; color: #333; border-color: #ccc; }
+
         /* --- PWA Generator Styles --- */
         .pwa-card { background: var(--chat-bg); padding: 25px; border-radius: 12px; border: 1px solid #444; margin-bottom: 20px; text-align: right; box-sizing: border-box;}
         body.light-mode .pwa-card { border-color: #ccc; }
@@ -389,7 +393,7 @@
     </script>
 
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#b07db5">
+    <meta name="theme-color" content="#9d6cc6">
     <link rel="apple-touch-icon" href="./icon-192.png">
     <script>
       if ('serviceWorker' in navigator) {
@@ -406,6 +410,9 @@
     <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"></select>
     <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'">🛠️ صانع PWA</button>
     <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
+    
+    <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
+
     <button id="export-btn" class="top-btn" onclick="exportData()">⬇️ تصدير البيانات</button>
     <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()">⬆️ استيراد البيانات</button>
     <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
@@ -415,6 +422,28 @@
     <div id="lightbox">
         <span id="lightbox-close">&times;</span>
         <img id="lightbox-img" src="">
+    </div>
+
+    <div id="html-viewer-modal" class="modal-overlay">
+        <div class="modal-container" style="max-width: 95vw; width: 95vw; height: 95vh; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; overflow: visible;">
+            <span class="modal-close" style="position: absolute; top: -15px; right: -10px; color: #fff; font-size: 28px; background: #e74c3c; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10000; cursor: pointer; border: 2px solid white;" onclick="closeHtmlViewer()">&times;</span>
+            
+            <h2 style="color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 22px;">👁️ عارض ومختبر الـ HTML (شاشة كاملة)</h2>
+            <p style="color: #888; font-size: 13px; margin-bottom: 10px;">ارفع ملف HTML أو الصق الكود هنا لعرض نتيجته مباشرة كصفحة كاملة</p>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                <input type="file" id="html-viewer-file" accept=".html,.htm,.txt" style="display: none;" onchange="loadHtmlFileToViewer(event)">
+                <button onclick="document.getElementById('html-viewer-file').click()" style="flex: 1; background: var(--folder-bg); color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: 1px dashed #777; cursor: pointer; transition: 0.3s;">📂 رفع ملف HTML</button>
+                <button onclick="pasteToHtmlViewer()" style="flex: 1; background: var(--purple); color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s;">📋 لصق الكود</button>
+                <button onclick="previewHtml()" style="flex: 2; background: var(--accent); color: white; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 15px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶️ تشغيل وعرض النتيجة</button>
+            </div>
+
+            <textarea id="html-viewer-input" style="width: 100%; height: 80px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; padding: 10px; font-family: monospace; direction: ltr; margin-bottom: 10px; box-sizing: border-box; flex-shrink: 0;" placeholder="الصق كود الـ HTML هنا..."></textarea>
+            
+            <div style="flex-grow: 1; border: 2px solid var(--primary); border-radius: 8px; background: white; overflow: hidden; position: relative;">
+                <iframe id="html-viewer-iframe" style="width: 100%; height: 100%; border: none; background: white;"></iframe>
+            </div>
+        </div>
     </div>
 
     <div id="pwa-modal" class="modal-overlay">
@@ -469,7 +498,7 @@
                 
                 <div class="pwa-form-group">
                     <label>كود صفحتك الأصلية (index.html)</label>
-                    <button type="button" onclick="pasteFromClipboard()" style="margin-bottom: 10px; cursor: pointer; background: var(--purple); border: none; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">📋 لصق من الحافظة</button>
+                    <button type="button" onclick="pastePwaCode()" style="margin-bottom: 10px; cursor: pointer; background: var(--purple); border: none; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">📋 لصق من الحافظة</button>
                     <div class="pwa-file-wrapper">
                         <div class="pwa-file-btn" id="htmlUploadLabel">📂 ارفع ملف index.html من جهازك</div>
                         <input type="file" id="htmlFileInput" accept=".html, .htm">
@@ -1291,15 +1320,18 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
+        /* تعديل: فتح الأكواد في العارض الداخلي بدل شاشة جديدة */
         function openAsWebsite(id) {
             const text = window.msgTexts[id];
             if (!text) return;
             if (/^https?:\/\//i.test(text.trim())) {
-                window.open(text.trim(), '_blank');
+                document.getElementById('html-viewer-input').value = '';
+                document.getElementById('html-viewer-modal').style.display = 'flex';
+                document.getElementById('html-viewer-iframe').src = text.trim();
             } else {
-                const newWin = window.open();
-                if (newWin) { newWin.document.open(); newWin.document.write(text); newWin.document.close(); } 
-                else { alert("يرجى السماح بالنوافذ المنبثقة (Pop-ups)."); }
+                document.getElementById('html-viewer-input').value = text;
+                document.getElementById('html-viewer-modal').style.display = 'flex';
+                previewHtml();
             }
         }
 
@@ -1419,7 +1451,7 @@
                     ${d.type!=='text' ? `<a href="${d.url}" download="${d.name}"><button class="btn-down">تنزيل</button></a>` : ''}
                     ${d.type==='file' ? (
                         d.name.endsWith('.txt') ? `<button class="btn-copy" onclick="fetchAndCopyTextFile('${d.url}', this)">نسخ المحتوى 📋</button>` : 
-                        d.name.endsWith('.html') ? `<button class="btn-html" onclick="copyLiveLink('${id}', this)">نسخ رابط Live 🔗</button><button class="btn-web" onclick="openLiveLink('${id}')">فتح Live 🌐</button><button class="btn-html" onclick="fetchAndCopyFile('${d.url}', this)">سحب ونسخ الكود</button>` : 
+                        d.name.endsWith('.html') ? `<button class="btn-web" onclick="openUrlInViewer('${d.url}')">عرض منبثق 👁️</button><button class="btn-html" onclick="copyLiveLink('${id}', this)">نسخ رابط Live 🔗</button><button class="btn-web" onclick="openLiveLink('${id}')">فتح Live 🌐</button><button class="btn-html" onclick="fetchAndCopyFile('${d.url}', this)">سحب ونسخ الكود</button>` : 
                         `<button class="btn-html" onclick="fetchAndCopyFile('${d.url}', this)">سحب ونسخ HTML 🔗</button>`
                     ) : ''}
                     <button class="btn-warning-action pin-btn" onclick="togglePinMsg('${id}', ${d.pinned ? true : false})">${d.pinned ? '📍 إلغاء التثبيت' : '📌 تثبيت'}</button>
@@ -1494,14 +1526,63 @@
             location.reload(); 
         };
 
-        /* --- أكواد PWA الشاملة الجديدة --- */
+        /* --- أكواد القسم المخصص (عارض HTML) --- */
+        
+        // ربط ملف الـ HTML المرفوع في الرسايل بالعارض الداخلي
+        window.openUrlInViewer = function(url) {
+            document.getElementById('html-viewer-input').value = '';
+            document.getElementById('html-viewer-modal').style.display = 'flex';
+            document.getElementById('html-viewer-iframe').src = url;
+        };
+
+        async function pasteToHtmlViewer() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (!text) return alert('الحافظة فارغة!');
+                document.getElementById('html-viewer-input').value = text;
+                previewHtml();
+            } catch (err) { 
+                alert('تعذر الوصول للحافظة، تأكد من إعطاء الصلاحية أو استخدم اللصق اليدوي (Ctrl+V).'); 
+            }
+        }
+
+        function loadHtmlFileToViewer(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('html-viewer-input').value = e.target.result;
+                previewHtml();
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        }
+
+        function previewHtml() {
+            const code = document.getElementById('html-viewer-input').value;
+            const iframe = document.getElementById('html-viewer-iframe');
+            iframe.src = 'about:blank'; // تنظيف الرابط القديم لو موجود
+            setTimeout(() => {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                doc.open();
+                doc.write(code);
+                doc.close();
+            }, 50);
+        }
+
+        function closeHtmlViewer() {
+            document.getElementById('html-viewer-modal').style.display = 'none';
+            document.getElementById('html-viewer-iframe').src = 'about:blank';
+        }
+
+        /* --- أكواد PWA الشاملة --- */
         let pwaTextFiles = { 'index.html': '', 'manifest.json': '', 'sw.js': '', 'offline.html': '' };
         let icon192Data = null;
         let icon512Data = null;
         let pwaCurrentAppName = 'PWA_App';
         let pwaUploadedImage = null;
 
-        async function pasteFromClipboard() {
+        async function pastePwaCode() {
             try {
                 const text = await navigator.clipboard.readText();
                 if (!text) {
@@ -1826,7 +1907,6 @@ self.addEventListener('fetch', event => {
             let text = calcExprInput.value;
             calcExprInput.value = text.substring(0, start) + value + text.substring(start);
             calcExprInput.selectionStart = calcExprInput.selectionEnd = start + value.length; 
-            // scroll input to end if needed
             calcExprInput.scrollLeft = calcExprInput.scrollWidth;
         }
 
@@ -1858,7 +1938,6 @@ self.addEventListener('fetch', event => {
             let expr = calcExprInput.value; 
             if (expr === "") return;
             
-            // تحويل علامات الضرب والقسمة المرئية للكمبيوتر
             expr = expr.replace(/×/g, '*')
                        .replace(/÷/g, '/');
 
