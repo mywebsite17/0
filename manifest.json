@@ -1,0 +1,24 @@
+{
+  "name": "CHAT PWA LIVE LINK",
+  "short_name": "CHAT PWA LIVE LINK",
+  "description": "CHAT PWA LIVE LINK ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#55c9dd",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
