@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
+<html lang="ar" dir="rtl"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الغرفة (V10)</title>
@@ -190,6 +189,26 @@
         }
         body.light-mode #messages-list { border-bottom: 1px solid #eee; }
 
+        /* زرار الطلوع لأعلى */
+        #scroll-to-top-btn {
+            position: absolute;
+            bottom: 90px;
+            left: 30px; 
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        #scroll-to-top-btn:hover { transform: scale(1.1); }
+
         .message-box { 
             background: var(--msg-bg); 
             padding: 12px; 
@@ -305,12 +324,19 @@
             position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: var(--danger); font-weight: bold; z-index: 10;
         }
 
-        /* --- ستايل عارض HTML الجديد --- */
+        /* --- ستايل عارض HTML الجديد بالتبويبات --- */
         body.light-mode #html-viewer-input { background: #fff; color: #333; border-color: #ccc; }
         
-        .html-tab { background: var(--folder-bg); color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; font-family: inherit; }
-        body.light-mode .html-tab { color: #333; border-color: #ccc; }
-        .html-tab.active-tab { background: var(--primary) !important; color: white !important; font-weight: bold; border-color: var(--primary) !important; }
+        .html-tab-container { display: inline-flex; align-items: center; background: var(--folder-bg); border: 1px solid #555; border-radius: 4px; overflow: hidden; white-space: nowrap; transition: 0.3s; }
+        body.light-mode .html-tab-container { border-color: #ccc; background: #ecf0f1; }
+        .html-tab-container.active-tab { background: var(--primary) !important; border-color: var(--primary) !important; }
+        .html-tab-container.active-tab .html-tab-btn { color: white !important; font-weight: bold; }
+        
+        .html-tab-btn { background: transparent; color: white; border: none; padding: 8px 10px; cursor: pointer; font-family: inherit; font-size: 13px; }
+        body.light-mode .html-tab-btn { color: #333; }
+        .tab-action { background: transparent; border: none; color: white; cursor: pointer; padding: 0 6px; font-size: 11px; opacity: 0.6; transition: 0.2s;}
+        .tab-action:hover { opacity: 1; transform: scale(1.1); }
+        body.light-mode .tab-action { color: #333; }
 
         /* --- PWA Generator Styles --- */
         .pwa-card { background: var(--chat-bg); padding: 25px; border-radius: 12px; border: 1px solid #444; margin-bottom: 20px; text-align: right; box-sizing: border-box;}
@@ -396,36 +422,48 @@
         });
       }
     </script>
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered'))
+            .catch(err => console.log('SW Failed', err));
+        });
+      }
+    </script>
 </head>
 <body>
 
-    <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"></select>
+    <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"><option value="0" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المظلم</option><option value="1" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المضيء</option><option value="2" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أزرق ليلي</option><option value="3" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر غابة</option><option value="4" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 غروب الشمس</option><option value="5" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني عميق</option><option value="6" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أحمر كرزي</option><option value="7" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 نسيم المحيط</option><option value="8" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بني قهوة</option><option value="9" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سايبر بانك</option><option value="10" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 شاشة هاكر</option><option value="11" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 دراكولا</option><option value="12" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مضيء</option><option value="13" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مظلم</option><option value="14" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ماتريكس</option><option value="15" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 وردي نيون</option><option value="16" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ذهبي فاخر</option><option value="17" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 رمادي حجري</option><option value="18" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل وردي</option><option value="19" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل أزرق</option><option value="20" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 لافندر</option><option value="21" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بركان</option><option value="22" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر نعناعي</option><option value="23" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فضاء سحيق</option><option value="24" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 قرمزي</option><option value="25" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيروزي</option><option value="26" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 خريف</option><option value="27" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 جليد</option><option value="28" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني ملكي</option><option value="29" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 تباين عالي</option><option value="30" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيسبوك</option></select>
     <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'">🛠️ صانع PWA</button>
     <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
     
     <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
 
     <button id="save-page-btn" class="top-btn" onclick="saveWholePageAsHTML()">💾 حفظ الصفحة</button>
-    <button id="export-btn" class="top-btn" onclick="exportData()">⬇️ تصدير البيانات</button>
-    <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()">⬆️ استيراد البيانات</button>
+    <button id="export-btn" class="top-btn" onclick="exportData()" style="display: block;">⬇️ تصدير البيانات</button>
+    <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()" style="display: block;">⬆️ استيراد البيانات</button>
     <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
-    <button id="clear-chat-btn" class="top-btn">🗑️ مسح المحتوى</button>
-    <button id="logout-btn" class="top-btn">خروج 🚪</button>
+    <button id="clear-chat-btn" class="top-btn" style="display: block;">🗑️ مسح المحتوى</button>
+    <button id="logout-btn" class="top-btn" style="display: block;">خروج 🚪</button>
 
     <div id="lightbox">
-        <span id="lightbox-close">&times;</span>
+        <span id="lightbox-close">×</span>
         <img id="lightbox-img" src="">
     </div>
 
-    <div id="html-viewer-modal" class="modal-overlay">
-        <div class="modal-container" style="max-width: 95vw; width: 95vw; height: 95vh; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; overflow: visible;">
-            <span class="modal-close" style="position: absolute; top: -15px; right: -10px; color: #fff; font-size: 28px; background: #e74c3c; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10000; cursor: pointer; border: 2px solid white;" onclick="closeHtmlViewer()">&times;</span>
+    <div id="html-viewer-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="margin: 0; max-width: 100vw; width: 100vw; height: 100vh; border-radius: 0; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow: hidden; border: none;">
+            <span class="modal-close" style="position: absolute; top: 15px; left: 20px; color: #fff; font-size: 30px; background: #e74c3c; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10000; cursor: pointer; border: 2px solid white;" onclick="closeHtmlViewer()" title="إغلاق والعودة للغرفة">×</span>
             
             <h2 style="color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 22px;">👁️ عارض ومختبر الـ HTML (شاشة كاملة)</h2>
             <p style="color: #888; font-size: 13px; margin-bottom: 10px;">ارفع ملف HTML أو الصق الكود هنا لعرض نتيجته مباشرة كصفحة كاملة</p>
 
-            <div id="html-viewer-tabs" style="display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;">
-                <button class="html-tab active-tab" onclick="switchHtmlTab('tab_1')" id="btn_tab_1">نافذة 1</button>
+            <div id="html-viewer-tabs" style="display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; align-items: center;">
                 <button onclick="addNewHtmlTab()" style="background: var(--accent); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight:bold;">+</button>
             </div>
             
@@ -433,20 +471,20 @@
                 <input type="file" id="html-viewer-file" accept=".html,.htm,.txt" style="display: none;" onchange="loadHtmlFileToViewer(event)">
                 <button onclick="document.getElementById('html-viewer-file').click()" style="flex: 1; background: var(--folder-bg); color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: 1px dashed #777; cursor: pointer; transition: 0.3s;">📂 رفع ملف HTML</button>
                 <button onclick="pasteToHtmlViewer()" style="flex: 1; background: var(--purple); color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s;">📋 لصق الكود</button>
-                <button onclick="previewHtml()" style="flex: 2; background: var(--accent); color: white; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 15px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶️ تشغيل وعرض النتيجة</button>
+                <button onclick="previewHtml()" style="flex: 2; background: var(--accent); color: white; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 15px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶️ تشغيل وحفظ النتيجة</button>
             </div>
 
             <textarea id="html-viewer-input" style="width: 100%; height: 80px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; padding: 10px; font-family: monospace; direction: ltr; margin-bottom: 10px; box-sizing: border-box; flex-shrink: 0;" placeholder="الصق كود الـ HTML هنا..."></textarea>
             
             <div style="flex-grow: 1; border: 2px solid var(--primary); border-radius: 8px; background: white; overflow: hidden; position: relative;">
-                <iframe id="html-viewer-iframe" style="width: 100%; height: 100%; border: none; background: white;"></iframe>
+                <iframe id="html-viewer-iframe" style="width: 100%; height: 100%; border: none; background: white;" src="about:blank"></iframe>
             </div>
         </div>
     </div>
 
     <div id="pwa-modal" class="modal-overlay">
         <div class="modal-container" style="max-width: 800px;">
-            <span class="modal-close" onclick="document.getElementById('pwa-modal').style.display='none'">&times;</span>
+            <span class="modal-close" onclick="document.getElementById('pwa-modal').style.display='none'">×</span>
             
             <div class="pwa-card">
                 <h1 style="text-align: center; color: var(--primary); margin-top: 0;">صانع PWA الشامل 🚀</h1>
@@ -501,7 +539,15 @@
                         <div class="pwa-file-btn" id="htmlUploadLabel">📂 ارفع ملف index.html من جهازك</div>
                         <input type="file" id="htmlFileInput" accept=".html, .htm">
                     </div>
-                    <textarea class="pwa-textarea" id="inputHtml" rows="6" placeholder="<!DOCTYPE html>&#10;<html>&#10;<head>&#10;  <title>موقعي</title>&#10;</head>&#10;<body>&#10;  <h1>أهلاً بك</h1>&#10;</body>&#10;</html>"></textarea>
+                    <textarea class="pwa-textarea" id="inputHtml" rows="6" placeholder="<!DOCTYPE html>
+<html>
+<head>
+  <title>موقعي</title>
+</head>
+<body>
+  <h1>أهلاً بك</h1>
+</body>
+</html>"></textarea>
                 </div>
 
                 <button class="pwa-btn-main" onclick="generateAllFiles()">توليد وتجهيز الملفات ⚡</button>
@@ -560,7 +606,7 @@
 
     <div id="calc-modal" class="modal-overlay">
         <div class="modal-container">
-            <span class="modal-close" style="position: absolute; top: -15px; right: -10px; color: #fff; font-size: 28px; background: #e74c3c; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10000; cursor: pointer; border: 2px solid white;" onclick="document.getElementById('calc-modal').style.display='none'">&times;</span>
+            <span class="modal-close" style="position: absolute; top: -15px; right: -10px; color: #fff; font-size: 28px; background: #e74c3c; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10000; cursor: pointer; border: 2px solid white;" onclick="document.getElementById('calc-modal').style.display='none'">×</span>
             
             <div class="calculator" data-theme="dark">
                 <div class="brand-area">
@@ -577,7 +623,7 @@
                         <span id="calc-alpha-indicator" style="opacity: 0.2;">A</span> 
                         <span>D</span> <span>Math</span>
                     </div>
-                    <input type="text" id="calc-expression" class="screen-expression" value="" readonly>
+                    <input type="text" id="calc-expression" class="screen-expression" value="" readonly="">
                     <div id="calc-result" class="screen-result">0</div>
                 </div>
 
@@ -658,17 +704,17 @@
         </div>
     </div>
 
-    <div id="login-screen">
+    <div id="login-screen" style="display: none;">
         <h2>الغرفة السرية 🔐</h2>
         <input type="password" id="room-pass" placeholder="اكتب كلمة مرور الغرفة...">
         <button id="enter-btn" style="width:100%; background:var(--primary); padding: 12px; color:white; border-radius:6px; font-weight:bold; font-size: 16px;">دخول آمن</button>
     </div>
 
-    <div id="chat-screen">
-        <h3 id="chat-title">الغرفة الرئيسية 🏠</h3>
+    <div id="chat-screen" style="display: flex;">
+        <h3 id="chat-title">📁 Iptv</h3>
         
         <div id="folders-bar">
-            <button id="back-to-main-btn" onclick="openFolder(null, 'الغرفة الرئيسية 🏠')">🔙 العودة للرئيسية</button>
+            <button id="back-to-main-btn" onclick="openFolder(null, 'الغرفة الرئيسية 🏠')" style="display: inline-block;">🔙 العودة للرئيسية</button>
             <button id="create-folder-btn" onclick="createNewFolder()">+ مجلد جديد</button>
             <div id="folders-list" style="display: inline-flex; gap: 8px;"></div>
         </div>
@@ -682,17 +728,19 @@
         
         <div id="messages-list"></div>
         
-        <div id="upload-progress-container">
-            <div id="upload-progress-bar"></div>
+        <button id="scroll-to-top-btn" onclick="scrollToTop()" title="الصعود لأعلى الشات">⬆️</button>
+        
+        <div id="upload-progress-container" style="display: none;">
+            <div id="upload-progress-bar" style="width: 0%; background: var(--accent);"></div>
             <div id="upload-progress-text">0%</div>
         </div>
 
         <div class="input-area">
-            <input type="file" id="file-upload" style="display:none;" multiple>
+            <input type="file" id="file-upload" style="display:none;" multiple="">
             <button style="background: var(--primary); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="document.getElementById('file-upload').click()" title="إرفاق ملف">📎</button>
             <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
             <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
-            <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..."></textarea>
+            <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 60px;"></textarea>
             <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 60px;" id="send-btn">إرسال</button>
         </div>
     </div>
@@ -758,24 +806,69 @@
             selectElement.style.background = theme.vars ? (theme.vars['--primary'] || 'var(--primary)') : 'var(--primary)';
         }
 
+        // تحديث جذري: حفظ الصفحة على نضافة لتجنب الأخطاء عند استرجاعها
         function saveWholePageAsHTML() {
-            const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const clone = document.documentElement.cloneNode(true);
+            
+            const chatScreen = clone.querySelector('#chat-screen');
+            if(chatScreen) chatScreen.style.display = 'none';
+            
+            const loginScreen = clone.querySelector('#login-screen');
+            if(loginScreen) loginScreen.style.display = 'block';
+            
+            const foldersList = clone.querySelector('#folders-list');
+            if(foldersList) foldersList.innerHTML = '';
+            
+            const messagesList = clone.querySelector('#messages-list');
+            if(messagesList) messagesList.innerHTML = '';
+            
+            const htmlTabs = clone.querySelector('#html-viewer-tabs');
+            if (htmlTabs) htmlTabs.innerHTML = '<button onclick="addNewHtmlTab()" style="background: var(--accent); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight:bold;">+</button>';
+            
+            const btnsToHide = ['#logout-btn', '#clear-chat-btn', '#export-btn', '#import-btn', '#back-to-main-btn'];
+            btnsToHide.forEach(id => {
+                const b = clone.querySelector(id);
+                if(b) b.style.display = 'none';
+            });
+            
+            const passInput = clone.querySelector('#room-pass');
+            if(passInput) passInput.value = '';
+            
+            const msgInput = clone.querySelector('#msg-input');
+            if(msgInput) msgInput.value = '';
+            
+            const htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Secret_Room_Full.html';
+            a.download = 'Secret_Room_Clean.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        let db, roomRef, foldersRef;
+        let db, roomRef, foldersRef, htmlTabsRef;
         let isInitialLoad = true; 
         window.msgTexts = {}; 
         let safePassGlobal = "";
         let currentFolderId = null; 
+
+        // حماية النظام من فتح الصفحة المحفوظة بدون لوجين
+        function ensureLogin() {
+            if (!db) {
+                alert("⚠️ الجلسة انتهت أو الملف محفوظ محلياً. الرجاء تسجيل الدخول أولاً لتفعيل الخصائص.");
+                document.getElementById('chat-screen').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('clear-chat-btn').style.display = 'none';
+                document.getElementById('export-btn').style.display = 'none';
+                document.getElementById('import-btn').style.display = 'none';
+                return false;
+            }
+            return true;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const themeSelector = document.getElementById('theme-selector');
@@ -792,6 +885,14 @@
                 themeSelector.value = savedTheme;
                 applyTheme(savedTheme);
             }
+
+            document.getElementById('messages-list').addEventListener('scroll', function() {
+                if (this.scrollTop > 300) {
+                    document.getElementById('scroll-to-top-btn').style.display = 'block';
+                } else {
+                    document.getElementById('scroll-to-top-btn').style.display = 'none';
+                }
+            });
 
             const urlParams = new URLSearchParams(window.location.search);
             const liveId = urlParams.get('live');
@@ -845,7 +946,6 @@
                 console.log("Local storage is restricted.");
             }
 
-            // تفعيل مستمعات أحداث الـ PWA
             document.getElementById('htmlFileInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -868,6 +968,10 @@
                 reader.readAsDataURL(file);
             });
         });
+
+        function scrollToTop() {
+            document.getElementById('messages-list').scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         function login(pass) {
             try {
@@ -899,6 +1003,9 @@
                 
                 foldersRef = db.ref(`rooms/${safePassGlobal}/folders_list`);
                 loadFoldersUI();
+
+                htmlTabsRef = db.ref(`rooms/${safePassGlobal}/html_tabs`);
+                loadHtmlTabsUI();
                 
                 try {
                     const lastFolderId = localStorage.getItem('last_folder_id');
@@ -922,9 +1029,8 @@
             if(e.key === 'Enter') login(document.getElementById('room-pass').value);
         });
 
-        /* --- نظام تصدير واستيراد البيانات --- */
         async function exportData() {
-            if (!safePassGlobal) return alert("سجل دخول أولاً!");
+            if (!ensureLogin() || !safePassGlobal) return;
             try {
                 const btn = document.getElementById('export-btn');
                 const originalText = btn.innerText;
@@ -959,7 +1065,7 @@
         }
 
         function importData(event) {
-            if (!safePassGlobal) return alert("سجل دخول أولاً!");
+            if (!ensureLogin() || !safePassGlobal) return;
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -981,7 +1087,6 @@
             event.target.value = ''; 
         }
 
-        /* --- نظام المجلدات --- */
         function loadFoldersUI() {
             foldersRef.on('value', (snapshot) => {
                 const foldersList = document.getElementById('folders-list');
@@ -1052,11 +1157,13 @@
         }
 
         function createNewFolder() {
+            if (!ensureLogin()) return;
             const folderName = prompt("أدخل اسم المجلد الجديد:");
             if(folderName && folderName.trim() !== "") { foldersRef.push({ name: folderName.trim(), time: Date.now(), pinned: false }); }
         }
 
         function editFolder(folderId, currentName) {
+            if (!ensureLogin()) return;
             const newName = prompt("تعديل اسم المجلد إلى:", currentName);
             if (newName && newName.trim() !== "" && newName.trim() !== currentName) {
                 foldersRef.child(folderId).update({ name: newName.trim() });
@@ -1066,6 +1173,7 @@
         }
 
         function deleteFolder(folderId, folderName) {
+            if (!ensureLogin()) return;
             if (confirm(`⚠️ هل أنت متأكد من حذف مجلد "${folderName}" وكل الرسايل والملفات اللي جواه نهائياً؟`)) {
                 foldersRef.child(folderId).remove();
                 db.ref(`rooms/${safePassGlobal}/folders_data/${folderId}`).remove();
@@ -1075,10 +1183,12 @@
         }
 
         function togglePinFolder(folderId, isPinned) {
+            if (!ensureLogin()) return;
             foldersRef.child(folderId).update({ pinned: isPinned });
         }
 
         function openFolder(folderId, folderTitle) {
+            if (!ensureLogin()) return;
             currentFolderId = folderId; 
 
             document.querySelectorAll('.folder-container').forEach(f => f.classList.remove('active-folder'));
@@ -1119,7 +1229,6 @@
             setTimeout(() => { isInitialLoad = false; }, 1500);
         }
 
-        /* --- نظام البحث --- */
         document.getElementById('search-box').addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             const folders = document.querySelectorAll('.folder-container');
@@ -1136,7 +1245,6 @@
             });
         });
 
-        /* --- نظام المحادثة ورفع الملفات --- */
         const msgInput = document.getElementById('msg-input');
         msgInput.addEventListener('input', function() {
             this.style.height = '60px';
@@ -1144,6 +1252,7 @@
         });
 
         function sendTextMessage() {
+            if (!ensureLogin()) return;
             const txt = msgInput.value.trim();
             if(txt) {
                 roomRef.push({type:"text", val:txt, time:Date.now(), pinned: false});
@@ -1155,6 +1264,7 @@
         document.getElementById('send-btn').onclick = sendTextMessage;
 
         function createNewTextFile() {
+            if (!ensureLogin()) return;
             let fileContent = document.getElementById('msg-input').value.trim();
             if (!fileContent) {
                 alert("يرجى كتابة محتوى الملف النصي في صندوق الكتابة أولاً!");
@@ -1180,6 +1290,7 @@
         }
 
         function createNewHTMLFile() {
+            if (!ensureLogin()) return;
             let fileContent = document.getElementById('msg-input').value.trim();
             if (!fileContent) {
                 alert("يرجى كتابة كود الـ HTML في صندوق الكتابة أولاً!");
@@ -1204,7 +1315,6 @@
             reader.readAsDataURL(blob);
         }
 
-        /* --- نظام إنشاء الروابط الحية --- */
         function getLiveLinkUrl(id) {
             const folder = currentFolderId ? currentFolderId : 'main';
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
@@ -1224,9 +1334,8 @@
             window.open(getLiveLinkUrl(id), '_blank');
         }
 
-        /* --- نظام رفع الملفات المجاني على سيرفر خارجي --- */
         async function handleFiles(files) {
-            if (!files || files.length === 0) return;
+            if (!ensureLogin() || !files || files.length === 0) return;
 
             const progressContainer = document.getElementById('upload-progress-container');
             const progressBar = document.getElementById('upload-progress-bar');
@@ -1306,7 +1415,6 @@
         dragOverlay.addEventListener('dragleave', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; });
         dragOverlay.addEventListener('drop', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files); });
 
-        // نغمة آيفون (Tri-Tone)
         function playNotifSound() {
             if (isInitialLoad) return;
             try {
@@ -1325,7 +1433,6 @@
                     osc.start(ctx.currentTime + time);
                     osc.stop(ctx.currentTime + time + duration);
                 }
-                // Tri-tone approximation
                 playTone(987.77, 0, 0.2);     
                 playTone(1318.51, 0.15, 0.2); 
                 playTone(987.77, 0.3, 0.4);   
@@ -1348,36 +1455,10 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        /* تعديل: فتح الأكواد في العارض الداخلي بتبويبات (Tabs) */
-        window.openUrlInViewer = function(url) {
-            addNewHtmlTab('رابط خارجي');
-            document.getElementById('html-viewer-input').value = '';
-            document.getElementById('html-viewer-modal').style.display = 'flex';
-            document.getElementById('html-viewer-iframe').src = url;
-            htmlTabsData[currentHtmlTab].code = ''; 
-            htmlTabsData[currentHtmlTab].url = url;
-        };
-
-        function openAsWebsite(id) {
-            const text = window.msgTexts[id];
-            if (!text) return;
-            addNewHtmlTab('كود ' + id.slice(-4));
-            if (/^https?:\/\//i.test(text.trim())) {
-                document.getElementById('html-viewer-input').value = '';
-                document.getElementById('html-viewer-modal').style.display = 'flex';
-                document.getElementById('html-viewer-iframe').src = text.trim();
-                htmlTabsData[currentHtmlTab].code = '';
-                htmlTabsData[currentHtmlTab].url = text.trim();
-            } else {
-                document.getElementById('html-viewer-input').value = text;
-                document.getElementById('html-viewer-modal').style.display = 'flex';
-                previewHtml();
-            }
-        }
-
         const proxyList = [
-            (url) => 'https://corsproxy.io/?' + encodeURIComponent(url),
             (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+            (url) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
+            (url) => 'https://corsproxy.io/?' + encodeURIComponent(url),
             (url) => 'https://thingproxy.freeboard.io/fetch/' + encodeURIComponent(url)
         ];
 
@@ -1400,7 +1481,16 @@
             try {
                 const originalText = btn.innerText;
                 btn.innerText = "جاري السحب ⏳...";
-                const html = await fetchContentWithMultiProxies(urlMatch[0]);
+                
+                let html;
+                try {
+                    const directRes = await fetch(urlMatch[0]);
+                    if(!directRes.ok) throw new Error();
+                    html = await directRes.text();
+                } catch(e) {
+                    html = await fetchContentWithMultiProxies(urlMatch[0]);
+                }
+                
                 await navigator.clipboard.writeText(html);
                 btn.innerText = "تم النسخ! ✔️";
                 setTimeout(() => btn.innerText = originalText, 2500);
@@ -1450,6 +1540,7 @@
         }
 
         window.togglePinMsg = function(id, currentState) {
+            if (!ensureLogin()) return;
             roomRef.child(id).update({ pinned: !currentState });
         };
 
@@ -1464,6 +1555,7 @@
                 const msgTime = new Date(d.time).toLocaleTimeString('ar-EG', { hour: 'numeric', minute: '2-digit', hour12: true });
 
                 let isLink = d.type === 'text' && /https?:\/\/[^\s]+/.test(d.val);
+                let urlMatchStr = isLink ? d.val.match(/https?:\/\/[^\s]+/)[0] : '';
 
                 let content;
                 if (d.type === 'text') {
@@ -1487,6 +1579,7 @@
                         <button class="btn-txt" onclick="downloadTxt('${id}')">حفظ txt 📄</button>
                         <button class="btn-web" onclick="openAsWebsite('${id}')">فتح كموقع 🌐</button>
                         ${isLink ? `<button class="btn-html" onclick="fetchAndCopyHTML('${id}', this)">سحب ونسخ HTML 🔗</button>` : ''}
+                        ${isLink ? `<button class="btn-web" onclick="window.open('${urlMatchStr}', '_blank')">فتح خارجي ↗️</button>` : ''}
                     ` : ''}
                     ${d.type!=='text' ? `<a href="${d.url}" download="${d.name}"><button class="btn-down">تنزيل</button></a>` : ''}
                     ${d.type==='file' ? (
@@ -1566,45 +1659,143 @@
             location.reload(); 
         };
 
-        /* --- أكواد القسم المخصص (عارض HTML مع التبويبات) --- */
-        let htmlTabsCount = 1;
-        let currentHtmlTab = 'tab_1';
-        let htmlTabsData = { 'tab_1': { title: 'نافذة 1', code: '', url: 'about:blank' } };
+        let currentHtmlTab = null;
+        let htmlTabsData = {};
+
+        function loadHtmlTabsUI() {
+            htmlTabsRef.on('value', (snapshot) => {
+                const tabsContainer = document.getElementById('html-viewer-tabs');
+                tabsContainer.innerHTML = '<button onclick="addNewHtmlTab()" style="background: var(--accent); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight:bold;">+</button>';
+
+                htmlTabsData = {};
+                let firstTabId = null;
+
+                snapshot.forEach((child) => {
+                    const tabId = child.key;
+                    const data = child.val();
+                    htmlTabsData[tabId] = data;
+                    if (!firstTabId) firstTabId = tabId;
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'html-tab-container' + (currentHtmlTab === tabId ? ' active-tab' : '');
+                    wrapper.id = 'wrapper_' + tabId;
+
+                    const btn = document.createElement('button');
+                    btn.className = 'html-tab-btn';
+                    btn.innerText = data.title;
+                    btn.onclick = () => switchHtmlTab(tabId);
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'tab-action';
+                    editBtn.innerText = '✏️';
+                    editBtn.title = 'تعديل اسم النافذة';
+                    editBtn.onclick = () => editHtmlTab(tabId, data.title);
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'tab-action';
+                    delBtn.innerText = '❌';
+                    delBtn.title = 'حذف النافذة';
+                    delBtn.onclick = () => deleteHtmlTab(tabId);
+
+                    wrapper.appendChild(btn);
+                    wrapper.appendChild(editBtn);
+                    wrapper.appendChild(delBtn);
+
+                    tabsContainer.insertBefore(wrapper, tabsContainer.lastElementChild);
+                });
+
+                if (!snapshot.exists()) {
+                    addNewHtmlTab('نافذة 1');
+                } else if (!htmlTabsData[currentHtmlTab] && firstTabId) {
+                    switchHtmlTab(firstTabId);
+                }
+            });
+        }
 
         function addNewHtmlTab(customTitle = null) {
-            htmlTabsCount++;
-            const newTabId = 'tab_' + htmlTabsCount;
-            const title = customTitle ? customTitle : 'نافذة ' + htmlTabsCount;
-            htmlTabsData[newTabId] = { title: title, code: '', url: 'about:blank' };
-
-            const tabBtn = document.createElement('button');
-            tabBtn.className = 'html-tab';
-            tabBtn.id = 'btn_' + newTabId;
-            tabBtn.innerText = title;
-            tabBtn.onclick = () => switchHtmlTab(newTabId);
-
-            const tabsContainer = document.getElementById('html-viewer-tabs');
-            tabsContainer.insertBefore(tabBtn, tabsContainer.lastElementChild);
-            switchHtmlTab(newTabId);
+            const title = customTitle ? customTitle : 'نافذة جديدة';
+            if (htmlTabsRef) {
+                const newTabRef = htmlTabsRef.push();
+                newTabRef.set({ title: title, code: '', url: 'about:blank' });
+                switchHtmlTab(newTabRef.key);
+            }
         }
 
         function switchHtmlTab(tabId) {
-            if (htmlTabsData[currentHtmlTab]) {
-                htmlTabsData[currentHtmlTab].code = document.getElementById('html-viewer-input').value;
+            if (currentHtmlTab && htmlTabsData[currentHtmlTab] && htmlTabsRef) {
+                htmlTabsRef.child(currentHtmlTab).update({
+                    code: document.getElementById('html-viewer-input').value
+                });
             }
 
-            document.querySelectorAll('.html-tab').forEach(btn => btn.classList.remove('active-tab'));
-            const targetBtn = document.getElementById('btn_' + tabId);
-            if(targetBtn) targetBtn.classList.add('active-tab');
-
             currentHtmlTab = tabId;
-            const tabData = htmlTabsData[tabId];
+            document.querySelectorAll('.html-tab-container').forEach(w => w.classList.remove('active-tab'));
+            const targetWrapper = document.getElementById('wrapper_' + tabId);
+            if(targetWrapper) targetWrapper.classList.add('active-tab');
+
+            const tabData = htmlTabsData[tabId] || { code: '', url: 'about:blank' };
             document.getElementById('html-viewer-input').value = tabData.code || '';
             
             if (tabData.url && tabData.url !== 'about:blank') {
                 document.getElementById('html-viewer-iframe').src = tabData.url;
             } else {
-                previewHtml();
+                previewHtml(false); 
+            }
+        }
+
+        function editHtmlTab(tabId, oldTitle) {
+            if (!htmlTabsRef) return;
+            const newTitle = prompt("تعديل اسم النافذة:", oldTitle);
+            if (newTitle && newTitle.trim() !== "" && newTitle !== oldTitle) {
+                htmlTabsRef.child(tabId).update({ title: newTitle.trim() });
+            }
+        }
+
+        function deleteHtmlTab(tabId) {
+            if (!htmlTabsRef) return;
+            if (confirm('هل أنت متأكد من حذف هذه النافذة؟')) {
+                htmlTabsRef.child(tabId).remove();
+                if (currentHtmlTab === tabId) {
+                    currentHtmlTab = null;
+                    document.getElementById('html-viewer-input').value = '';
+                    document.getElementById('html-viewer-iframe').src = 'about:blank';
+                }
+            }
+        }
+
+        window.openUrlInViewer = function(url) {
+            if (!htmlTabsRef) return;
+            const newTabRef = htmlTabsRef.push();
+            const newTabId = newTabRef.key;
+            newTabRef.set({ title: 'رابط خارجي', code: '', url: url });
+
+            document.getElementById('html-viewer-input').value = '';
+            document.getElementById('html-viewer-modal').style.display = 'flex';
+            currentHtmlTab = newTabId;
+            document.getElementById('html-viewer-iframe').src = url;
+        };
+
+        function openAsWebsite(id) {
+            const text = window.msgTexts[id];
+            if (!text || !htmlTabsRef) return;
+            
+            const isLinkOnly = /^https?:\/\/[^\s]+/i.test(text.trim());
+            const title = 'كود ' + id.slice(-4);
+            const newTabRef = htmlTabsRef.push();
+            const newTabId = newTabRef.key;
+
+            if (isLinkOnly) {
+                newTabRef.set({ title: title, code: '', url: text.trim() });
+                document.getElementById('html-viewer-input').value = '';
+                document.getElementById('html-viewer-modal').style.display = 'flex';
+                currentHtmlTab = newTabId;
+                document.getElementById('html-viewer-iframe').src = text.trim();
+            } else {
+                newTabRef.set({ title: title, code: text, url: 'about:blank' });
+                document.getElementById('html-viewer-input').value = text;
+                document.getElementById('html-viewer-modal').style.display = 'flex';
+                currentHtmlTab = newTabId;
+                previewHtml(true);
             }
         }
 
@@ -1618,8 +1809,7 @@
                 }
                 
                 document.getElementById('html-viewer-input').value = text;
-                htmlTabsData[currentHtmlTab].url = 'about:blank';
-                previewHtml();
+                previewHtml(true);
             } catch (err) { 
                 alert('تعذر الوصول للحافظة، تأكد من إعطاء الصلاحية أو استخدم اللصق اليدوي (Ctrl+V).'); 
             }
@@ -1634,17 +1824,19 @@
                     addNewHtmlTab(file.name);
                 }
                 document.getElementById('html-viewer-input').value = e.target.result;
-                htmlTabsData[currentHtmlTab].url = 'about:blank';
-                previewHtml();
+                previewHtml(true);
             };
             reader.readAsText(file);
             event.target.value = ''; 
         }
 
-        function previewHtml() {
+        function previewHtml(saveToFirebase = true) {
             const code = document.getElementById('html-viewer-input').value;
-            htmlTabsData[currentHtmlTab].code = code;
-            htmlTabsData[currentHtmlTab].url = 'about:blank';
+            
+            if (saveToFirebase && currentHtmlTab && htmlTabsRef) {
+                htmlTabsRef.child(currentHtmlTab).update({ code: code, url: 'about:blank' });
+            }
+
             const iframe = document.getElementById('html-viewer-iframe');
             iframe.src = 'about:blank';
             setTimeout(() => {
@@ -1656,6 +1848,11 @@
         }
 
         function closeHtmlViewer() {
+            if (currentHtmlTab && htmlTabsRef) {
+                htmlTabsRef.child(currentHtmlTab).update({
+                    code: document.getElementById('html-viewer-input').value
+                });
+            }
             document.getElementById('html-viewer-modal').style.display = 'none';
             document.getElementById('html-viewer-iframe').src = 'about:blank';
         }
@@ -2078,5 +2275,5 @@ self.addEventListener('fetch', event => {
             }
         }
     </script>
-</body>
-</html>
+
+</body></html>

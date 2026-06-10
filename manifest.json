@@ -1,12 +1,12 @@
 {
-  "name": "CHAT WPA LIVE LINK",
-  "short_name": "CHAT WPA LIVE LINK",
-  "description": "CHAT WPA LIVE LINK",
+  "name": "My CHAT  PWA App",
+  "short_name": "My CHAT  PWA App",
+  "description": "My CHAT  PWA App",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#9e88aa",
+  "theme_color": "#3b82f6",
   "icons": [
     {
       "src": "./icon-192.png",
