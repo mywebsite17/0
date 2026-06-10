@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الغرفة السرية - نسخة المجلدات المتقدمة (V10)</title>
+    <title>الغرفة (V10)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root { 
@@ -58,8 +58,9 @@
         #open-pwa-btn { left: 180px; background: var(--purple); }
         #open-calc-btn { left: 320px; background: #2c3e50; }
         #open-html-viewer-btn { left: 470px; background: #e84393; }
-        #export-btn { left: 620px; background: #009688; display: none; }
-        #import-btn { left: 760px; background: #607d8b; display: none; }
+        #save-page-btn { left: 620px; background: #3498db; }
+        #export-btn { left: 760px; background: #009688; display: none; }
+        #import-btn { left: 900px; background: #607d8b; display: none; }
         #logout-btn { right: 20px; background: var(--danger); display: none; }
         #clear-chat-btn { right: 120px; background: var(--warning); display: none; }
         
@@ -306,6 +307,10 @@
 
         /* --- ستايل عارض HTML الجديد --- */
         body.light-mode #html-viewer-input { background: #fff; color: #333; border-color: #ccc; }
+        
+        .html-tab { background: var(--folder-bg); color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; font-family: inherit; }
+        body.light-mode .html-tab { color: #333; border-color: #ccc; }
+        .html-tab.active-tab { background: var(--primary) !important; color: white !important; font-weight: bold; border-color: var(--primary) !important; }
 
         /* --- PWA Generator Styles --- */
         .pwa-card { background: var(--chat-bg); padding: 25px; border-radius: 12px; border: 1px solid #444; margin-bottom: 20px; text-align: right; box-sizing: border-box;}
@@ -380,20 +385,7 @@
     </style>
 
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#1b2f11">
-    <link rel="apple-touch-icon" href="./icon-192.png">
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW Registered'))
-            .catch(err => console.log('SW Failed', err));
-        });
-      }
-    </script>
-
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#9d6cc6">
+    <meta name="theme-color" content="#9e88aa">
     <link rel="apple-touch-icon" href="./icon-192.png">
     <script>
       if ('serviceWorker' in navigator) {
@@ -413,6 +405,7 @@
     
     <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
 
+    <button id="save-page-btn" class="top-btn" onclick="saveWholePageAsHTML()">💾 حفظ الصفحة</button>
     <button id="export-btn" class="top-btn" onclick="exportData()">⬇️ تصدير البيانات</button>
     <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()">⬆️ استيراد البيانات</button>
     <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
@@ -430,6 +423,11 @@
             
             <h2 style="color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 22px;">👁️ عارض ومختبر الـ HTML (شاشة كاملة)</h2>
             <p style="color: #888; font-size: 13px; margin-bottom: 10px;">ارفع ملف HTML أو الصق الكود هنا لعرض نتيجته مباشرة كصفحة كاملة</p>
+
+            <div id="html-viewer-tabs" style="display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;">
+                <button class="html-tab active-tab" onclick="switchHtmlTab('tab_1')" id="btn_tab_1">نافذة 1</button>
+                <button onclick="addNewHtmlTab()" style="background: var(--accent); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight:bold;">+</button>
+            </div>
             
             <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
                 <input type="file" id="html-viewer-file" accept=".html,.htm,.txt" style="display: none;" onchange="loadHtmlFileToViewer(event)">
@@ -707,7 +705,7 @@
             alert("⚠️ حدث خطأ في النظام:\n" + message);
         };
 
-        // --- نظام الـ 30 ستايل (Themes) ---
+        // --- نظام الـ 31 ستايل (Themes) ---
         const themes = [
             { name: "الافتراضي المظلم", vars: {} },
             { name: "الافتراضي المضيء", vars: { '--bg-color': '#f4f7f6', '--chat-bg': '#ffffff', '--text-dark': '#333', '--msg-bg': '#e3f2fd', '--folder-bg': '#ecf0f1', '--primary': '#4a90e2' } },
@@ -738,7 +736,8 @@
             { name: "خريف", vars: { '--bg-color': '#261608', '--chat-bg': '#40240D', '--text-dark': '#F0D5B6', '--msg-bg': '#593313', '--primary': '#D2691E', '--folder-bg': '#4D2B10' } },
             { name: "جليد", vars: { '--bg-color': '#0A1A2A', '--chat-bg': '#152C40', '--text-dark': '#C0E0FF', '--msg-bg': '#203E59', '--primary': '#5DADE2', '--folder-bg': '#1B354D' } },
             { name: "أرجواني ملكي", vars: { '--bg-color': '#140026', '--chat-bg': '#28004D', '--text-dark': '#E0B3FF', '--msg-bg': '#3D0073', '--primary': '#8A2BE2', '--folder-bg': '#330060' } },
-            { name: "تباين عالي", vars: { '--bg-color': '#000000', '--chat-bg': '#000000', '--text-dark': '#FFFFFF', '--msg-bg': '#111111', '--primary': '#FFFFFF', '--folder-bg': '#222222', '--accent': '#FFFFFF' } }
+            { name: "تباين عالي", vars: { '--bg-color': '#000000', '--chat-bg': '#000000', '--text-dark': '#FFFFFF', '--msg-bg': '#111111', '--primary': '#FFFFFF', '--folder-bg': '#222222', '--accent': '#FFFFFF' } },
+            { name: "فيسبوك", vars: { '--bg-color': '#f0f2f5', '--chat-bg': '#ffffff', '--text-dark': '#050505', '--msg-bg': '#e4e6eb', '--primary': '#1877f2', '--folder-bg': '#f0f2f5', '--accent': '#42b72a' } }
         ];
 
         function applyTheme(index) {
@@ -757,6 +756,19 @@
             
             const selectElement = document.getElementById('theme-selector');
             selectElement.style.background = theme.vars ? (theme.vars['--primary'] || 'var(--primary)') : 'var(--primary)';
+        }
+
+        function saveWholePageAsHTML() {
+            const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Secret_Room_Full.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         let db, roomRef, foldersRef;
@@ -1294,13 +1306,29 @@
         dragOverlay.addEventListener('dragleave', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; });
         dragOverlay.addEventListener('drop', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files); });
 
+        // نغمة آيفون (Tri-Tone)
         function playNotifSound() {
             if (isInitialLoad) return;
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime); 
-                osc.connect(gainNode); gainNode.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15); 
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                function playTone(freq, time, duration) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + time);
+                    gain.gain.setValueAtTime(0.5, ctx.currentTime + time);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + time + duration);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + time);
+                    osc.stop(ctx.currentTime + time + duration);
+                }
+                // Tri-tone approximation
+                playTone(987.77, 0, 0.2);     
+                playTone(1318.51, 0.15, 0.2); 
+                playTone(987.77, 0.3, 0.4);   
             } catch (e) { }
         }
 
@@ -1320,14 +1348,26 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        /* تعديل: فتح الأكواد في العارض الداخلي بدل شاشة جديدة */
+        /* تعديل: فتح الأكواد في العارض الداخلي بتبويبات (Tabs) */
+        window.openUrlInViewer = function(url) {
+            addNewHtmlTab('رابط خارجي');
+            document.getElementById('html-viewer-input').value = '';
+            document.getElementById('html-viewer-modal').style.display = 'flex';
+            document.getElementById('html-viewer-iframe').src = url;
+            htmlTabsData[currentHtmlTab].code = ''; 
+            htmlTabsData[currentHtmlTab].url = url;
+        };
+
         function openAsWebsite(id) {
             const text = window.msgTexts[id];
             if (!text) return;
+            addNewHtmlTab('كود ' + id.slice(-4));
             if (/^https?:\/\//i.test(text.trim())) {
                 document.getElementById('html-viewer-input').value = '';
                 document.getElementById('html-viewer-modal').style.display = 'flex';
                 document.getElementById('html-viewer-iframe').src = text.trim();
+                htmlTabsData[currentHtmlTab].code = '';
+                htmlTabsData[currentHtmlTab].url = text.trim();
             } else {
                 document.getElementById('html-viewer-input').value = text;
                 document.getElementById('html-viewer-modal').style.display = 'flex';
@@ -1526,20 +1566,59 @@
             location.reload(); 
         };
 
-        /* --- أكواد القسم المخصص (عارض HTML) --- */
-        
-        // ربط ملف الـ HTML المرفوع في الرسايل بالعارض الداخلي
-        window.openUrlInViewer = function(url) {
-            document.getElementById('html-viewer-input').value = '';
-            document.getElementById('html-viewer-modal').style.display = 'flex';
-            document.getElementById('html-viewer-iframe').src = url;
-        };
+        /* --- أكواد القسم المخصص (عارض HTML مع التبويبات) --- */
+        let htmlTabsCount = 1;
+        let currentHtmlTab = 'tab_1';
+        let htmlTabsData = { 'tab_1': { title: 'نافذة 1', code: '', url: 'about:blank' } };
+
+        function addNewHtmlTab(customTitle = null) {
+            htmlTabsCount++;
+            const newTabId = 'tab_' + htmlTabsCount;
+            const title = customTitle ? customTitle : 'نافذة ' + htmlTabsCount;
+            htmlTabsData[newTabId] = { title: title, code: '', url: 'about:blank' };
+
+            const tabBtn = document.createElement('button');
+            tabBtn.className = 'html-tab';
+            tabBtn.id = 'btn_' + newTabId;
+            tabBtn.innerText = title;
+            tabBtn.onclick = () => switchHtmlTab(newTabId);
+
+            const tabsContainer = document.getElementById('html-viewer-tabs');
+            tabsContainer.insertBefore(tabBtn, tabsContainer.lastElementChild);
+            switchHtmlTab(newTabId);
+        }
+
+        function switchHtmlTab(tabId) {
+            if (htmlTabsData[currentHtmlTab]) {
+                htmlTabsData[currentHtmlTab].code = document.getElementById('html-viewer-input').value;
+            }
+
+            document.querySelectorAll('.html-tab').forEach(btn => btn.classList.remove('active-tab'));
+            const targetBtn = document.getElementById('btn_' + tabId);
+            if(targetBtn) targetBtn.classList.add('active-tab');
+
+            currentHtmlTab = tabId;
+            const tabData = htmlTabsData[tabId];
+            document.getElementById('html-viewer-input').value = tabData.code || '';
+            
+            if (tabData.url && tabData.url !== 'about:blank') {
+                document.getElementById('html-viewer-iframe').src = tabData.url;
+            } else {
+                previewHtml();
+            }
+        }
 
         async function pasteToHtmlViewer() {
             try {
                 const text = await navigator.clipboard.readText();
                 if (!text) return alert('الحافظة فارغة!');
+                
+                if (document.getElementById('html-viewer-input').value.trim() !== '') {
+                    addNewHtmlTab('كود ملصوق');
+                }
+                
                 document.getElementById('html-viewer-input').value = text;
+                htmlTabsData[currentHtmlTab].url = 'about:blank';
                 previewHtml();
             } catch (err) { 
                 alert('تعذر الوصول للحافظة، تأكد من إعطاء الصلاحية أو استخدم اللصق اليدوي (Ctrl+V).'); 
@@ -1551,7 +1630,11 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
+                if (document.getElementById('html-viewer-input').value.trim() !== '') {
+                    addNewHtmlTab(file.name);
+                }
                 document.getElementById('html-viewer-input').value = e.target.result;
+                htmlTabsData[currentHtmlTab].url = 'about:blank';
                 previewHtml();
             };
             reader.readAsText(file);
@@ -1560,8 +1643,10 @@
 
         function previewHtml() {
             const code = document.getElementById('html-viewer-input').value;
+            htmlTabsData[currentHtmlTab].code = code;
+            htmlTabsData[currentHtmlTab].url = 'about:blank';
             const iframe = document.getElementById('html-viewer-iframe');
-            iframe.src = 'about:blank'; // تنظيف الرابط القديم لو موجود
+            iframe.src = 'about:blank';
             setTimeout(() => {
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 doc.open();
