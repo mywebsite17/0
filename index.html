@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الغرفة (V10)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -60,6 +60,7 @@
         #save-page-btn { left: 620px; background: #3498db; }
         #export-btn { left: 760px; background: #009688; display: none; }
         #import-btn { left: 900px; background: #607d8b; display: none; }
+        #orientation-btn { left: 1040px; background: #34495e; }
         #logout-btn { right: 20px; background: var(--danger); display: none; }
         #clear-chat-btn { right: 120px; background: var(--warning); display: none; }
         
@@ -435,6 +436,19 @@
         });
       }
     </script>
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#b082ac">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered'))
+            .catch(err => console.log('SW Failed', err));
+        });
+      }
+    </script>
 </head>
 <body>
 
@@ -448,6 +462,7 @@
     <button id="export-btn" class="top-btn" onclick="exportData()" style="display: block;">⬇️ تصدير البيانات</button>
     <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()" style="display: block;">⬆️ استيراد البيانات</button>
     <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
+    <button id="orientation-btn" class="top-btn" onclick="toggleOrientation()">🔄 تدوير الشاشة</button>
     <button id="clear-chat-btn" class="top-btn" style="display: block;">🗑️ مسح المحتوى</button>
     <button id="logout-btn" class="top-btn" style="display: block;">خروج 🚪</button>
 
@@ -741,6 +756,9 @@
             <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
             <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
             <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 60px;"></textarea>
+            
+            <button style="background: #3498db; color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 60px; font-weight: bold; min-width: max-content;" onclick="pasteIntoChat()" title="لصق نص من الحافظة">📋 لصق</button>
+            
             <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 60px;" id="send-btn">إرسال</button>
         </div>
     </div>
@@ -971,6 +989,50 @@
 
         function scrollToTop() {
             document.getElementById('messages-list').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // دالة قفل الشاشة (جديدة)
+        let isOrientationLocked = false;
+        async function toggleOrientation() {
+            const btn = document.getElementById('orientation-btn');
+            try {
+                if (!isOrientationLocked) {
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock(screen.orientation.type);
+                        isOrientationLocked = true;
+                        btn.innerHTML = "🔒 قفل التدوير";
+                        btn.style.background = "var(--danger)";
+                    } else {
+                        throw new Error("API not supported");
+                    }
+                } else {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                        isOrientationLocked = false;
+                        btn.innerHTML = "🔄 تدوير الشاشة";
+                        btn.style.background = "#34495e";
+                    }
+                }
+            } catch (error) {
+                alert("⚠️ المتصفح بتاعك مش بيدعم قفل الشاشة المباشر، أو محتاج تفتح التطبيق في وضع ملء الشاشة (Fullscreen) الأول.");
+            }
+        }
+
+        // دالة اللصق من الحافظة (جديدة)
+        async function pasteIntoChat() {
+            try {
+                const text = await navigator.clipboard.readText();
+                const input = document.getElementById('msg-input');
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                input.value = input.value.substring(0, start) + text + input.value.substring(end);
+                input.selectionStart = input.selectionEnd = start + text.length;
+                input.style.height = '60px';
+                input.style.height = (input.scrollHeight) + 'px';
+                input.focus();
+            } catch (err) {
+                alert('⚠️ مش قادر أوصل للحافظة، اتأكد إنك مدي الصلاحية (Clipboard Permission) للمتصفح.');
+            }
         }
 
         function login(pass) {
@@ -1334,6 +1396,7 @@
             window.open(getLiveLinkUrl(id), '_blank');
         }
 
+        // --- تحديث جذري لدالة رفع الملفات مع نظام Timeout & Auto-Retry لحل مشكلة التعليق ---
         async function handleFiles(files) {
             if (!ensureLogin() || !files || files.length === 0) return;
 
@@ -1346,7 +1409,7 @@
             for (let i = 0; i < files.length; i++) {
                 const f = files[i];
 
-                progressBar.style.width = '40%';
+                progressBar.style.width = '20%';
                 progressBar.style.background = 'var(--primary)';
                 progressText.innerText = `جاري رفع ${f.name} على السيرفر (لحد 200 ميجا) ⏳...`;
 
@@ -1355,14 +1418,35 @@
                     formData.append('reqtype', 'fileupload');
                     formData.append('fileToUpload', f);
 
-                    const response = await fetch('https://catbox.moe/user/api.php', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    if (!response.ok) throw new Error('السيرفر الخارجي رفض الملف');
-
-                    const fileUrl = await response.text(); 
+                    let fileUrl = null;
+                    let retries = 2; // أقصى عدد محاولات لو الشبكة علقت (إجمالي 3 محاولات)
+                    
+                    for(let attempt = 0; attempt <= retries; attempt++) {
+                        try {
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 45000); // فصل المحاولة لو عدت 45 ثانية معلقة
+                            
+                            const response = await fetch('https://catbox.moe/user/api.php', {
+                                method: 'POST',
+                                body: formData,
+                                signal: controller.signal
+                            });
+                            
+                            clearTimeout(timeoutId);
+                            
+                            if (!response.ok) throw new Error('رفض من السيرفر');
+                            const urlResult = await response.text();
+                            
+                            if(!urlResult || !urlResult.startsWith('http')) throw new Error('استجابة غير صحيحة');
+                            
+                            fileUrl = urlResult.trim();
+                            break; // الخروج من اللوب بنجاح
+                        } catch(err) {
+                            if(attempt === retries) throw err; // رمي الخطأ لو المحاولات خلصت
+                            progressText.innerText = `الشبكة علقت، جاري المحاولة مرة تانية (${attempt + 1})...`;
+                            await new Promise(r => setTimeout(r, 2000)); // الانتظار ثانيتين قبل المحاولة الجديدة
+                        }
+                    }
 
                     progressBar.style.width = '80%';
                     progressText.innerText = `جاري التشفير وحفظ الرابط في غرفتك 🔒...`;
@@ -1370,7 +1454,7 @@
                     await roomRef.push({
                         type: f.type.startsWith('image/') ? 'img' : 'file',
                         name: f.name || 'Uploaded_File',
-                        url: fileUrl.trim(),
+                        url: fileUrl,
                         time: Date.now(),
                         pinned: false
                     });
@@ -1382,8 +1466,8 @@
                 } catch (error) {
                     progressBar.style.background = 'var(--danger)';
                     progressText.innerText = `فشل الإرسال ❌`;
-                    console.error(error);
-                    alert("❌ حدث خطأ أثناء الرفع: تأكد إن الملف حجمه مش معدي 200 ميجا والإنترنت مستقر.");
+                    console.error("Upload Error:", error);
+                    alert("❌ حدث خطأ أثناء الرفع: الملف معلق أو الشبكة ضعيفة. المحاولات التلقائية فشلت، حاول مرة تانية أو صغر حجم الملف.");
                 }
             }
 
