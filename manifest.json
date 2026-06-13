@@ -1,12 +1,12 @@
 {
-  "name": "CHAT PWA LIVE ",
-  "short_name": "CHAT PWA LIVE ",
-  "description": "CHAT PWA LIVE ",
+  "name": "My PWA App",
+  "short_name": "My PWA App",
+  "description": "My PWA App",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#b082ac",
+  "theme_color": "#9162d0",
   "icons": [
     {
       "src": "./icon-192.png",
