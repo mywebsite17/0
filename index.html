@@ -193,7 +193,7 @@
         /* زرار الطلوع لأعلى ولأسفل */
         #scroll-to-top-btn {
             position: absolute;
-            bottom: 90px;
+            bottom: 110px;
             left: 30px; 
             background: var(--accent);
             color: white;
@@ -204,7 +204,7 @@
             font-size: 20px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: block; /* أصبحت ظاهرة دائما */
+            display: block; 
             z-index: 100;
             transition: transform 0.2s;
         }
@@ -212,7 +212,7 @@
         
         #scroll-to-bottom-btn {
             position: absolute;
-            bottom: 90px;
+            bottom: 110px;
             left: 85px; 
             background: var(--primary);
             color: white;
@@ -223,7 +223,7 @@
             font-size: 20px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: block; /* أصبحت ظاهرة دائما */
+            display: block; 
             z-index: 100;
             transition: transform 0.2s;
         }
@@ -299,7 +299,7 @@
         .input-area { display: flex; gap: 8px; padding: 10px 0 0 0; align-items: flex-end; }
         textarea.chat-input { 
             flex: 1; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; 
-            padding: 10px; resize: none; height: 60px; max-height: 250px; box-sizing: border-box; font-family: inherit; overflow-y: auto;
+            padding: 10px; resize: none; height: 80px; max-height: 350px; box-sizing: border-box; font-family: inherit; overflow-y: auto;
         }
         body.light-mode textarea.chat-input { background: #fff; color: #333; border: 1px solid #ccc; }
         .msg-img { max-width: 100%; max-height: 250px; border-radius: 6px; cursor: zoom-in; margin-top: 5px; transition: 0.3s; }
@@ -434,13 +434,16 @@
     </script>
 
 
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#9162d0">
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="manifest" href="./manifest.json?v=v1781331775807">
+    <meta name="theme-color" content="#b47ea5">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781331775807">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
+          navigator.serviceWorker.register('./sw.js?v=v1781331775807')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -450,7 +453,7 @@
 <body>
 
     <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"><option value="0" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المظلم</option><option value="1" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المضيء</option><option value="2" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أزرق ليلي</option><option value="3" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر غابة</option><option value="4" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 غروب الشمس</option><option value="5" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني عميق</option><option value="6" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أحمر كرزي</option><option value="7" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 نسيم المحيط</option><option value="8" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بني قهوة</option><option value="9" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سايبر بانك</option><option value="10" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 شاشة هاكر</option><option value="11" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 دراكولا</option><option value="12" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مضيء</option><option value="13" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مظلم</option><option value="14" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ماتريكس</option><option value="15" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 وردي نيون</option><option value="16" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ذهبي فاخر</option><option value="17" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 رمادي حجري</option><option value="18" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل وردي</option><option value="19" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل أزرق</option><option value="20" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 لافندر</option><option value="21" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بركان</option><option value="22" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر نعناعي</option><option value="23" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فضاء سحيق</option><option value="24" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 قرمزي</option><option value="25" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيروزي</option><option value="26" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 خريف</option><option value="27" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 جليد</option><option value="28" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني ملكي</option><option value="29" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 تباين عالي</option><option value="30" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيسبوك</option></select>
-    <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'">🛠️ صانع PWA</button>
+    <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'; document.getElementById('cacheVersion').value = 'v' + Date.now();">🛠️ صانع PWA</button>
     <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
     
     <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
@@ -527,7 +530,7 @@
                 </div>
 
                 <div class="pwa-form-group">
-                    <label>رقم إصدار الكاش (غيّره لما تحدث كودك عشان يمسح الكاش القديم عند الناس)</label>
+                    <label>رقم إصدار الكاش (تلقائي أو غيّره يدوي عشان يمسح الكاش القديم عند الناس)</label>
                     <input type="text" class="pwa-input" id="cacheVersion" value="v1">
                 </div>
                 
@@ -754,15 +757,15 @@
 
         <div class="input-area">
             <input type="file" id="file-upload" style="display:none;" multiple="">
-            <button style="background: var(--primary); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="document.getElementById('file-upload').click()" title="إرفاق ملف">📎</button>
-            <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
-            <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 60px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
-            <button style="background: #3498db; color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 60px; font-weight: bold; min-width: max-content;" onclick="pasteIntoChat()" title="لصق نص من الحافظة">📋 لصق</button>
-            <button style="background: var(--accent); color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 60px; font-weight: bold; min-width: max-content;" onclick="sendTextMessage()" title="إرسال الرسالة">📤 إرسال</button>
+            <button style="background: var(--primary); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 80px;" onclick="document.getElementById('file-upload').click()" title="إرفاق ملف">📎</button>
+            <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 80px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
+            <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 80px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
+            <button style="background: #3498db; color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 80px; font-weight: bold; min-width: max-content;" onclick="pasteIntoChat()" title="لصق نص من الحافظة">📋 لصق</button>
+            <button style="background: var(--accent); color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 80px; font-weight: bold; min-width: max-content;" onclick="sendTextMessage()" title="إرسال الرسالة">📤 إرسال</button>
             
-            <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 60px;"></textarea>
+            <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 80px;"></textarea>
             
-            <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 60px;" id="send-btn">إرسال</button>
+            <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 80px;" id="send-btn">إرسال</button>
         </div>
     </div>
 
@@ -889,6 +892,24 @@
             return true;
         }
 
+        let isOrientationLocked = false;
+        
+        document.addEventListener('click', function lockOrientationOnFirstClick() {
+            try {
+                if (!isOrientationLocked && screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock(screen.orientation.type).then(() => {
+                        isOrientationLocked = true;
+                        const btn = document.getElementById('orientation-btn');
+                        if (btn) {
+                            btn.innerHTML = "🔒 قفل التدوير";
+                            btn.style.background = "var(--danger)";
+                        }
+                    }).catch(e => {});
+                }
+            } catch(e) {}
+            document.removeEventListener('click', lockOrientationOnFirstClick);
+        }, { once: true });
+
         document.addEventListener('DOMContentLoaded', () => {
             const themeSelector = document.getElementById('theme-selector');
             themes.forEach((th, idx) => {
@@ -991,7 +1012,6 @@
             list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
         }
 
-        let isOrientationLocked = false;
         async function toggleOrientation() {
             const btn = document.getElementById('orientation-btn');
             try {
@@ -1025,7 +1045,7 @@
                 const end = input.selectionEnd;
                 input.value = input.value.substring(0, start) + text + input.value.substring(end);
                 input.selectionStart = input.selectionEnd = start + text.length;
-                input.style.height = '60px';
+                input.style.height = '80px';
                 input.style.height = (input.scrollHeight) + 'px';
                 input.focus();
             } catch (err) {
@@ -1061,6 +1081,19 @@
                 document.getElementById('export-btn').style.display = 'block';
                 document.getElementById('import-btn').style.display = 'block';
                 
+                try {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock(screen.orientation.type).then(() => {
+                            isOrientationLocked = true;
+                            const btn = document.getElementById('orientation-btn');
+                            if (btn) {
+                                btn.innerHTML = "🔒 قفل التدوير";
+                                btn.style.background = "var(--danger)";
+                            }
+                        }).catch(e => console.log("Orientation auto-lock info: ", e));
+                    }
+                } catch(e) {}
+
                 foldersRef = db.ref(`rooms/${safePassGlobal}/folders_list`);
                 loadFoldersUI();
 
@@ -1342,7 +1375,7 @@
 
         const msgInput = document.getElementById('msg-input');
         msgInput.addEventListener('input', function() {
-            this.style.height = '60px';
+            this.style.height = '80px';
             this.style.height = (this.scrollHeight) + 'px';
         });
 
@@ -1352,7 +1385,7 @@
             if(txt) {
                 roomRef.push({type:"text", val:txt, time:Date.now(), pinned: false});
                 msgInput.value = "";
-                msgInput.style.height = '60px'; 
+                msgInput.style.height = '80px'; 
             }
         }
 
@@ -1379,7 +1412,7 @@
                     pinned: false
                 });
                 document.getElementById('msg-input').value = "";
-                document.getElementById('msg-input').style.height = '60px';
+                document.getElementById('msg-input').style.height = '80px';
             };
             reader.readAsDataURL(blob);
         }
@@ -1405,7 +1438,7 @@
                     pinned: false
                 });
                 document.getElementById('msg-input').value = "";
-                document.getElementById('msg-input').style.height = '60px';
+                document.getElementById('msg-input').style.height = '80px';
             };
             reader.readAsDataURL(blob);
         }
@@ -2125,7 +2158,7 @@
             const shortName = document.getElementById('shortName').value;
             const appDescription = document.getElementById('appDescription').value;
             const appOrientation = document.getElementById('appOrientation').value;
-            const cacheVersion = document.getElementById('cacheVersion').value.trim() || 'v1';
+            const cacheVersion = document.getElementById('cacheVersion').value.trim() || ('v' + Date.now());
             const themeColor = document.getElementById('themeColor').value;
             const inputHtml = document.getElementById('inputHtml').value;
             
@@ -2142,14 +2175,14 @@
                 "name": appName,
                 "short_name": shortName,
                 "description": appDescription,
-                "start_url": "./index.html",
+                "start_url": `./index.html?v=${cacheVersion}`,
                 "display": "standalone",
                 "orientation": appOrientation,
                 "background_color": "#ffffff",
                 "theme_color": themeColor,
                 "icons": [
-                    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-                    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+                    { "src": `./icon-192.png?v=${cacheVersion}`, "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+                    { "src": `./icon-512.png?v=${cacheVersion}`, "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
                 ]
             };
             pwaTextFiles['manifest.json'] = JSON.stringify(manifestObj, null, 2);
@@ -2175,7 +2208,7 @@
 </html>`;
 
             pwaTextFiles['sw.js'] = `const CACHE_NAME = 'pwa-cache-${cacheVersion}';
-const urlsToCache = [ './', './index.html', './offline.html', './icon-192.png', './icon-512.png', './manifest.json' ];
+const urlsToCache = [ './', './index.html?v=${cacheVersion}', './offline.html?v=${cacheVersion}', './icon-192.png?v=${cacheVersion}', './icon-512.png?v=${cacheVersion}', './manifest.json?v=${cacheVersion}' ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -2205,7 +2238,7 @@ self.addEventListener('fetch', event => {
       .then(response => {
         return response || fetch(event.request).catch(() => {
           if (event.request.mode === 'navigate') {
-            return caches.match('./offline.html');
+            return caches.match('./offline.html?v=${cacheVersion}');
           }
         });
       })
@@ -2213,13 +2246,16 @@ self.addEventListener('fetch', event => {
 });`;
 
             const pwaTags = `
-    <link rel="manifest" href="./manifest.json">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="manifest" href="./manifest.json?v=${cacheVersion}">
     <meta name="theme-color" content="${themeColor}">
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=${cacheVersion}">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
+          navigator.serviceWorker.register('./sw.js?v=${cacheVersion}')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
