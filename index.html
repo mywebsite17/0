@@ -449,6 +449,22 @@
         });
       }
     </script>
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="manifest" href="./manifest.json?v=v1781482857996">
+    <meta name="theme-color" content="#9679b9">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781482857996">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=v1781482857996')
+            .then(reg => console.log('SW Registered'))
+            .catch(err => console.log('SW Failed', err));
+        });
+      }
+    </script>
 </head>
 <body>
 
@@ -1879,14 +1895,46 @@
             }
         };
 
+        // ====== التعديل الرئيسي اللي طلبته للخروج التلقائي المباشر ======
         document.getElementById('logout-btn').onclick = () => { 
+            // 1. مسح بيانات التخزين
             try { 
                 localStorage.removeItem('chat_pass'); 
                 localStorage.removeItem('last_folder_id'); 
                 localStorage.removeItem('last_folder_title'); 
             } catch(e){}
-            location.reload(); 
+            
+            // 2. التبديل الفوري للواجهة بدون ريفريش نهائياً عشان ميرجعش يفتح لوحده
+            document.getElementById('chat-screen').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('clear-chat-btn').style.display = 'none';
+            document.getElementById('export-btn').style.display = 'none';
+            document.getElementById('import-btn').style.display = 'none';
+            
+            document.getElementById('login-screen').style.display = 'block';
+            
+            // 3. تفريغ المدخلات
+            document.getElementById('room-pass').value = '';
+            document.getElementById('msg-input').value = '';
+            document.getElementById('search-box').value = '';
+            document.getElementById('messages-list').innerHTML = '';
+            document.getElementById('folders-list').innerHTML = '';
+            
+            // 4. إيقاف الاتصال وتفريغ الذاكرة بشكل كامل
+            if(roomRef) { roomRef.off(); roomRef = null; }
+            if(foldersRef) { foldersRef.off(); foldersRef = null; }
+            if(htmlTabsRef) { htmlTabsRef.off(); htmlTabsRef = null; }
+            
+            db = null;
+            safePassGlobal = "";
+            currentFolderId = null;
+            
+            // 5. تحديث الرابط في المتصفح عشان نمنع أي تعليق
+            try {
+                window.history.replaceState(null, null, window.location.pathname);
+            } catch(e) {}
         };
+        // =================================================================
 
         let currentHtmlTab = null;
         let htmlTabsData = {};
