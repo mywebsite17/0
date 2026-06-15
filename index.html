@@ -453,13 +453,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="manifest" href="./manifest.json?v=v1781482857996">
-    <meta name="theme-color" content="#9679b9">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781482857996">
+    <link rel="manifest" href="./manifest.json?v=v1781486704099">
+    <meta name="theme-color" content="#b9d85a">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781486704099">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=v1781482857996')
+          navigator.serviceWorker.register('./sw.js?v=v1781486704099')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -1065,6 +1065,7 @@
             }
         }
 
+        // ====== تم إزالة input.focus() لمنع ظهور الكيبورد واهتزاز الشاشة ======
         async function pasteIntoChat() {
             try {
                 const text = await navigator.clipboard.readText();
@@ -1075,11 +1076,11 @@
                 input.selectionStart = input.selectionEnd = start + text.length;
                 input.style.height = '100px';
                 input.style.height = (input.scrollHeight) + 'px';
-                input.focus();
             } catch (err) {
                 alert('⚠️ مش قادر أوصل للحافظة، اتأكد إنك مدي الصلاحية (Clipboard Permission) للمتصفح.');
             }
         }
+        // ====================================================================
 
         function login(pass) {
             try {
