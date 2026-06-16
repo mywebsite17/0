@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.2">
-    <title>الغرفة (V10)</title>
+    <title>الغرفة (V100)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root { 
@@ -482,13 +482,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="manifest" href="./manifest.json?v=v1781589396096">
-    <meta name="theme-color" content="#845bd7">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781589396096">
+    <link rel="manifest" href="./manifest.json?v=v1781597604292">
+    <meta name="theme-color" content="#c16fc4">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781597604292">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=v1781589396096')
+          navigator.serviceWorker.register('./sw.js?v=v1781597604292')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -909,11 +909,11 @@
             <button style="background: var(--purple); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 100px;" onclick="createNewTextFile()" title="حفظ المكتوب كملف نصي">📝</button>
             <button style="background: var(--orange); color:white; font-size:18px; padding: 8px 14px; border-radius:6px; height: 100px;" onclick="createNewHTMLFile()" title="حفظ الكود كملف HTML مباشر">🌐</button>
             <button style="background: #3498db; color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 100px; font-weight: bold; min-width: max-content;" onclick="pasteIntoChat()" title="لصق نص من الحافظة">📋 لصق</button>
+            <button style="background: var(--danger); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 100px; font-weight: bold;" onclick="document.getElementById('msg-input').value=''; document.getElementById('msg-input').style.height='100px';" title="مسح المكتوب">🗑️ مسح</button>
             <button style="background: var(--accent); color:white; padding: 8px 14px; border-radius:6px; font-size: 16px; height: 100px; font-weight: bold; min-width: max-content;" onclick="sendTextMessage()" title="إرسال الرسالة">📤 إرسال</button>
             
             <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 100px;"></textarea>
             
-            <button style="background: var(--danger); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 100px; font-weight: bold;" onclick="document.getElementById('msg-input').value=''; document.getElementById('msg-input').style.height='100px';" title="مسح المكتوب">🗑️ مسح</button>
             <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 100px;" id="send-btn">إرسال</button>
         </div>
     </div>
@@ -1223,7 +1223,7 @@
                 input.selectionStart = input.selectionEnd = start + text.length;
                 input.style.height = '100px';
                 input.style.height = (input.scrollHeight) + 'px';
-                input.focus();
+                // input.focus(); تم تعطيلها لمنع ظهور الكيبورد واهتزاز الشاشة
             } catch (err) {
                 alert('⚠️ مش قادر أوصل للحافظة، اتأكد إنك مدي الصلاحية (Clipboard Permission) للمتصفح.');
             }
