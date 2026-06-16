@@ -482,13 +482,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="manifest" href="./manifest.json?v=v1781587421554">
-    <meta name="theme-color" content="#924ee4">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781587421554">
+    <link rel="manifest" href="./manifest.json?v=v1781589396096">
+    <meta name="theme-color" content="#845bd7">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781589396096">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=v1781587421554')
+          navigator.serviceWorker.register('./sw.js?v=v1781589396096')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -913,6 +913,7 @@
             
             <textarea id="msg-input" class="chat-input" placeholder="اكتب رسالتك، اسحب ملفاً، أو انسخ والصق أي صورة هنا..." style="height: 100px;"></textarea>
             
+            <button style="background: var(--danger); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 100px; font-weight: bold;" onclick="document.getElementById('msg-input').value=''; document.getElementById('msg-input').style.height='100px';" title="مسح المكتوب">🗑️ مسح</button>
             <button style="background: var(--accent); color:white; padding: 10px 20px; border-radius:6px; font-size: 14px; height: 100px;" id="send-btn">إرسال</button>
         </div>
     </div>
@@ -1475,7 +1476,6 @@
             if(folderId) {
                 roomRef = db.ref(`rooms/${safePassGlobal}/folders_data/${folderId}/messages`);
                 document.getElementById('back-to-main-btn').style.display = 'inline-block';
-                // الفتح الخارجي اتلغى تماماً من هنا
             } else {
                 roomRef = db.ref(`rooms/${safePassGlobal}/messages`);
                 document.getElementById('back-to-main-btn').style.display = 'none';
@@ -1773,7 +1773,6 @@
         dragOverlay.addEventListener('dragleave', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; });
         dragOverlay.addEventListener('drop', (e) => { e.preventDefault(); dragOverlay.style.display = 'none'; if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files); });
 
-        // ====== المولد البرمجي للـ 100 نغمة ======
         function playNotifSound(isPreview = false) {
             if (isInitialLoad && !isPreview) return;
             try {
@@ -1801,26 +1800,25 @@
 
                 const sId = parseInt(localStorage.getItem('chat_sound_v10') || '1');
                 
-                // --- 10 نغمات ستايل آيفون ---
                 if (sId <= 10) {
-                    if (sId === 1) { // Classic Note
+                    if (sId === 1) { 
                         playNoteTone(783.99, 0, 0.4, 0.5, 'sine');
                         playNoteTone(1046.50, 0, 0.4, 0.4, 'sine');
                         playNoteTone(1567.98, 0, 0.4, 0.2, 'triangle');
-                    } else if (sId === 2) { // Tri-Tone
+                    } else if (sId === 2) { 
                         playNoteTone(880.00, 0, 0.3, 0.5, 'sine');
                         playNoteTone(1108.73, 0.15, 0.3, 0.5, 'sine');
                         playNoteTone(1318.51, 0.3, 0.4, 0.5, 'sine');
-                    } else if (sId === 3) { // Chord
+                    } else if (sId === 3) { 
                         playNoteTone(523.25, 0, 0.6, 0.4, 'triangle');
                         playNoteTone(659.25, 0, 0.6, 0.4, 'triangle');
                         playNoteTone(783.99, 0, 0.6, 0.4, 'sine');
-                    } else if (sId === 4) { // Pop
+                    } else if (sId === 4) { 
                         playNoteTone(1046.50, 0, 0.1, 0.6, 'sine');
-                    } else if (sId === 5) { // Pulse
+                    } else if (sId === 5) { 
                         playNoteTone(880.00, 0, 0.2, 0.4, 'square');
                         playNoteTone(880.00, 0.15, 0.2, 0.4, 'square');
-                    } else { // 6 to 10 Glassy/Chimes
+                    } else { 
                         const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51, 1567.98, 1760.00];
                         const numNotes = (sId % 3) + 2; 
                         const baseIndex = (sId * 2) % 10; 
@@ -1834,12 +1832,11 @@
                     return;
                 }
 
-                // --- 90 نغمة ستايل أندرويد ---
                 const androidScales = [
-                    [392.00, 523.25, 659.25, 783.99], // C Major
-                    [440.00, 554.37, 659.25, 880.00], // A Major
-                    [349.23, 440.00, 523.25, 698.46], // F Major
-                    [493.88, 659.25, 740.00, 987.77]  // B Minor
+                    [392.00, 523.25, 659.25, 783.99], 
+                    [440.00, 554.37, 659.25, 880.00], 
+                    [349.23, 440.00, 523.25, 698.46], 
+                    [493.88, 659.25, 740.00, 987.77]  
                 ];
                 
                 const scaleIdx = sId % 4;
@@ -1848,19 +1845,19 @@
                 const wType = waveTypes[sId % 3];
                 
                 const style = sId % 5;
-                if (style === 0) { // Single Soft Blip
+                if (style === 0) { 
                     playNoteTone(selectedScale[2], 0, 0.2, 0.4, 'sine');
-                } else if (style === 1) { // Double Material Beep
+                } else if (style === 1) { 
                     playNoteTone(selectedScale[1], 0, 0.15, 0.4, wType);
                     playNoteTone(selectedScale[3], 0.12, 0.2, 0.4, wType);
-                } else if (style === 2) { // Triple Descending (Notification)
+                } else if (style === 2) { 
                     playNoteTone(selectedScale[3], 0, 0.15, 0.3, 'sine');
                     playNoteTone(selectedScale[2], 0.1, 0.15, 0.3, 'sine');
                     playNoteTone(selectedScale[1], 0.2, 0.3, 0.3, 'sine');
-                } else if (style === 3) { // Quick Up
+                } else if (style === 3) { 
                     playNoteTone(selectedScale[0], 0, 0.1, 0.4, 'triangle');
                     playNoteTone(selectedScale[2], 0.08, 0.3, 0.4, 'triangle');
-                } else if (style === 4) { // Chord Pluck
+                } else if (style === 4) { 
                     playNoteTone(selectedScale[0], 0, 0.4, 0.3, wType);
                     playNoteTone(selectedScale[2], 0.02, 0.4, 0.3, wType);
                     playNoteTone(selectedScale[3], 0.04, 0.4, 0.3, wType);
@@ -2247,10 +2244,8 @@
             
             if (tabData.url && tabData.url !== 'about:blank') {
                 document.getElementById('html-viewer-iframe').src = tabData.url;
-                // تم إلغاء الفتح الخارجي التلقائي هنا
             } else {
                 previewHtml(false); 
-                // تم إلغاء الفتح الخارجي التلقائي هنا
             }
         }
 
