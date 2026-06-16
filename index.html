@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.2">
-    <title>الغرفة (V100)</title>
+    <title>الغرفة (V1000)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root { 
@@ -89,7 +89,7 @@
         }
         
         h2 { text-align: center; margin-top: 0; margin-bottom: 20px; }
-        #chat-title { text-align: center; margin-top: 0; margin-bottom: 10px; color: var(--primary); }
+        #chat-title { margin: 0; color: var(--primary); font-size: 18px; white-space: nowrap; }
         
         #room-pass {
             width: 100%;
@@ -482,13 +482,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="manifest" href="./manifest.json?v=v1781597604292">
-    <meta name="theme-color" content="#c16fc4">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781597604292">
+    <link rel="manifest" href="./manifest.json?v=v1781598788170">
+    <meta name="theme-color" content="#9c5ad8">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781598788170">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=v1781597604292')
+          navigator.serviceWorker.register('./sw.js?v=v1781598788170')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -770,7 +770,6 @@
     </div>
 
     <div id="chat-screen" style="display: flex;">
-        <h3 id="chat-title">📁 Iptv</h3>
         
         <div id="folders-bar">
             <button id="back-to-main-btn" onclick="openFolder(null, 'الغرفة الرئيسية 🏠')" style="display: inline-block;">🔙 العودة للرئيسية</button>
@@ -778,7 +777,8 @@
             <div id="folders-list" style="display: inline-flex; gap: 8px;"></div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+            <h3 id="chat-title" style="margin: 0; white-space: nowrap;">📁 Iptv</h3>
             <input type="text" id="search-box" class="search-input" list="search-history-list" placeholder="🔍 بحث عن مجلد أو رسالة..." style="margin-bottom: 0; flex-grow: 1;">
             <select id="sound-selector" onchange="saveSound(this.value)" title="اختر نغمة الإشعار" style="flex-shrink: 0; width: max-content;">
                 <option value="1" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 1</option>
