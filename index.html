@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.2">
-    <title>الغرفة (V1000)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.1">
+    <title>الغرفة (V10)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root { 
@@ -57,10 +57,11 @@
         #open-pwa-btn { left: 180px; background: var(--purple); }
         #open-calc-btn { left: 320px; background: #2c3e50; }
         #open-html-viewer-btn { left: 470px; background: #e84393; }
-        #save-page-btn { left: 620px; background: #3498db; }
-        #export-btn { left: 760px; background: #009688; display: none; }
-        #import-btn { left: 900px; background: #607d8b; display: none; }
-        #orientation-btn { left: 1040px; background: #34495e; }
+        #open-extractor-btn { left: 620px; background: #e67e22; }
+        #save-page-btn { left: 750px; background: #3498db; }
+        #export-btn { left: 880px; background: #009688; display: none; }
+        #import-btn { left: 1020px; background: #607d8b; display: none; }
+        #orientation-btn { left: 1160px; background: #34495e; }
         #logout-btn { right: 20px; background: var(--danger); display: none; }
         #clear-chat-btn { right: 120px; background: var(--warning); display: none; }
         
@@ -89,7 +90,7 @@
         }
         
         h2 { text-align: center; margin-top: 0; margin-bottom: 20px; }
-        #chat-title { margin: 0; color: var(--primary); font-size: 18px; white-space: nowrap; }
+        #chat-title { margin: 0; color: var(--primary); font-size: 18px; white-space: nowrap; font-weight: bold; }
         
         #room-pass {
             width: 100%;
@@ -106,8 +107,8 @@
 
         #folders-bar {
             display: flex;
-            gap: 10px;
-            padding-bottom: 10px;
+            gap: 12px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #444;
             margin-bottom: 10px;
             overflow-x: auto;
@@ -116,25 +117,47 @@
         }
         body.light-mode #folders-bar { border-bottom: 1px solid #ccc; }
         
+        /* تأثيرات الـ 3D للفولدرات */
         .folder-container {
             display: inline-flex;
             align-items: center;
-            background: var(--folder-bg);
-            border: 1px solid #555;
-            border-radius: 20px;
-            padding: 0 10px;
+            background: linear-gradient(180deg, var(--folder-bg) 0%, rgba(0,0,0,0.2) 100%);
+            background-color: var(--folder-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 4px 12px;
             gap: 6px;
-            transition: 0.2s;
+            box-shadow: 0 4px 0px rgba(0, 0, 0, 0.5), 0 5px 10px rgba(0,0,0,0.3);
+            transform: translateY(0);
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
         }
-        body.light-mode .folder-container { border-color: #ccc; }
-
+        .folder-container:active {
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0,0,0,0.3);
+            transform: translateY(4px);
+        }
         .folder-container.active-folder {
-            background-color: var(--primary) !important;
+            background: var(--primary);
+            box-shadow: 0 0px 0px rgba(0,0,0,0.5), 0 0 15px var(--primary);
+            transform: translateY(4px);
             border-color: #fff !important;
-            box-shadow: 0 0 8px rgba(0,0,0,0.3);
         }
         .folder-container.active-folder .folder-btn-main {
             color: #fff !important;
+        }
+        
+        body.light-mode .folder-container {
+            background: linear-gradient(180deg, var(--folder-bg) 0%, rgba(200,200,200,0.5) 100%);
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 0px #a0a0a0, 0 5px 10px rgba(0,0,0,0.1);
+        }
+        body.light-mode .folder-container:active {
+            box-shadow: 0 0px 0px #a0a0a0, 0 2px 4px rgba(0,0,0,0.1);
+            transform: translateY(4px);
+        }
+        body.light-mode .folder-container.active-folder {
+            background: var(--primary);
+            box-shadow: 0 0px 0px #a0a0a0, 0 0 10px var(--primary);
         }
         
         .folder-btn-main {
@@ -159,8 +182,8 @@
         }
         .folder-action-btn:hover { opacity: 1; }
 
-        #create-folder-btn { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
-        #back-to-main-btn { background: var(--danger); color: white; border: none; display: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+        #create-folder-btn { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        #back-to-main-btn { background: var(--danger); color: white; border: none; display: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         .search-input {
             width: 100%;
@@ -482,13 +505,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="manifest" href="./manifest.json?v=v1781598788170">
-    <meta name="theme-color" content="#9c5ad8">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781598788170">
+    <link rel="manifest" href="./manifest.json?v=v1781684206549">
+    <meta name="theme-color" content="#142643">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781684206549">
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=v1781598788170')
+          navigator.serviceWorker.register('./sw.js?v=v1781684206549')
             .then(reg => console.log('SW Registered'))
             .catch(err => console.log('SW Failed', err));
         });
@@ -497,11 +520,11 @@
 </head>
 <body>
 
-    <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"><option value="0" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المظلم</option><option value="1" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 الافتراضي المضيء</option><option value="2" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أزرق ليلي</option><option value="3" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر غابة</option><option value="4" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 غروب الشمس</option><option value="5" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني عميق</option><option value="6" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أحمر كرزي</option><option value="7" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 نسيم المحيط</option><option value="8" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بني قهوة</option><option value="9" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سايبر بانك</option><option value="10" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 شاشة هاكر</option><option value="11" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 دراكولا</option><option value="12" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مضيء</option><option value="13" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 سولارايز مظلم</option><option value="14" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ماتريكس</option><option value="15" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 وردي نيون</option><option value="16" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 ذهبي فاخر</option><option value="17" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 رمادي حجري</option><option value="18" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل وردي</option><option value="19" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 باستيل أزرق</option><option value="20" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 لافندر</option><option value="21" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 بركان</option><option value="22" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أخضر نعناعي</option><option value="23" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فضاء سحيق</option><option value="24" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 قرمزي</option><option value="25" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيروزي</option><option value="26" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 خريف</option><option value="27" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 جليد</option><option value="28" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 أرجواني ملكي</option><option value="29" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 تباين عالي</option><option value="30" style="background: rgb(30, 30, 30); color: rgb(224, 224, 224);">🎨 فيسبوك</option></select>
+    <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"></select>
     <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'; document.getElementById('cacheVersion').value = 'v' + Date.now();">🛠️ صانع PWA</button>
     <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
-    
     <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
+    <button id="open-extractor-btn" class="top-btn" onclick="openExtractor()">🔗 المستخرج</button>
 
     <button id="save-page-btn" class="top-btn" onclick="saveWholePageAsHTML()">💾 حفظ الصفحة</button>
     <button id="export-btn" class="top-btn" onclick="exportData()" style="display: block;">⬇️ تصدير البيانات</button>
@@ -513,6 +536,21 @@
     <div id="lightbox">
         <span id="lightbox-close">×</span>
         <img id="lightbox-img" src="">
+    </div>
+
+    <div id="extractor-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="max-width: 800px; height: 80vh; display: flex; flex-direction: column;">
+            <span class="modal-close" onclick="document.getElementById('extractor-modal').style.display='none'">×</span>
+            <h2 style="color: var(--primary);">🔗 مستخرج الروابط والميديا</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button onclick="extractLinks('all')" style="flex:1; background: var(--primary); color: white; padding: 10px; border-radius: 6px;">الكل</button>
+                <button onclick="extractLinks('links')" style="flex:1; background: var(--purple); color: white; padding: 10px; border-radius: 6px;">روابط فقط</button>
+                <button onclick="extractLinks('media')" style="flex:1; background: var(--accent); color: white; padding: 10px; border-radius: 6px;">ميديا (صور/ملفات)</button>
+            </div>
+            <div id="extractor-results" style="flex: 1; overflow-y: auto; background: #2a2a2a; border-radius: 8px; padding: 15px; text-align: left; direction: ltr;">
+                </div>
+            <button onclick="copyAllExtracted()" style="margin-top: 15px; background: var(--warning); color: white; padding: 10px; border-radius: 6px; font-weight: bold; width: 100%;">📋 نسخ الكل</button>
+        </div>
     </div>
 
     <div id="html-viewer-modal" class="modal-overlay" style="display: none;">
@@ -777,111 +815,11 @@
             <div id="folders-list" style="display: inline-flex; gap: 8px;"></div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
-            <h3 id="chat-title" style="margin: 0; white-space: nowrap;">📁 Iptv</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between;">
+            <h3 id="chat-title" style="margin: 0; white-space: nowrap;">📁 المجلد</h3>
             <input type="text" id="search-box" class="search-input" list="search-history-list" placeholder="🔍 بحث عن مجلد أو رسالة..." style="margin-bottom: 0; flex-grow: 1;">
-            <select id="sound-selector" onchange="saveSound(this.value)" title="اختر نغمة الإشعار" style="flex-shrink: 0; width: max-content;">
-                <option value="1" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 1</option>
-                <option value="2" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 2</option>
-                <option value="3" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 3</option>
-                <option value="4" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 4</option>
-                <option value="5" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 5</option>
-                <option value="6" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 6</option>
-                <option value="7" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 7</option>
-                <option value="8" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 8</option>
-                <option value="9" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 9</option>
-                <option value="10" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة آيفون 10</option>
-                <option value="11" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 11</option>
-                <option value="12" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 12</option>
-                <option value="13" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 13</option>
-                <option value="14" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 14</option>
-                <option value="15" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 15</option>
-                <option value="16" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 16</option>
-                <option value="17" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 17</option>
-                <option value="18" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 18</option>
-                <option value="19" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 19</option>
-                <option value="20" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 20</option>
-                <option value="21" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 21</option>
-                <option value="22" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 22</option>
-                <option value="23" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 23</option>
-                <option value="24" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 24</option>
-                <option value="25" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 25</option>
-                <option value="26" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 26</option>
-                <option value="27" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 27</option>
-                <option value="28" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 28</option>
-                <option value="29" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 29</option>
-                <option value="30" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 30</option>
-                <option value="31" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 31</option>
-                <option value="32" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 32</option>
-                <option value="33" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 33</option>
-                <option value="34" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 34</option>
-                <option value="35" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 35</option>
-                <option value="36" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 36</option>
-                <option value="37" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 37</option>
-                <option value="38" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 38</option>
-                <option value="39" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 39</option>
-                <option value="40" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 40</option>
-                <option value="41" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 41</option>
-                <option value="42" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 42</option>
-                <option value="43" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 43</option>
-                <option value="44" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 44</option>
-                <option value="45" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 45</option>
-                <option value="46" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 46</option>
-                <option value="47" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 47</option>
-                <option value="48" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 48</option>
-                <option value="49" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 49</option>
-                <option value="50" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 50</option>
-                <option value="51" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 51</option>
-                <option value="52" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 52</option>
-                <option value="53" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 53</option>
-                <option value="54" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 54</option>
-                <option value="55" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 55</option>
-                <option value="56" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 56</option>
-                <option value="57" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 57</option>
-                <option value="58" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 58</option>
-                <option value="59" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 59</option>
-                <option value="60" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 60</option>
-                <option value="61" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 61</option>
-                <option value="62" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 62</option>
-                <option value="63" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 63</option>
-                <option value="64" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 64</option>
-                <option value="65" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 65</option>
-                <option value="66" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 66</option>
-                <option value="67" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 67</option>
-                <option value="68" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 68</option>
-                <option value="69" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 69</option>
-                <option value="70" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 70</option>
-                <option value="71" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 71</option>
-                <option value="72" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 72</option>
-                <option value="73" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 73</option>
-                <option value="74" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 74</option>
-                <option value="75" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 75</option>
-                <option value="76" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 76</option>
-                <option value="77" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 77</option>
-                <option value="78" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 78</option>
-                <option value="79" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 79</option>
-                <option value="80" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 80</option>
-                <option value="81" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 81</option>
-                <option value="82" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 82</option>
-                <option value="83" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 83</option>
-                <option value="84" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 84</option>
-                <option value="85" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 85</option>
-                <option value="86" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 86</option>
-                <option value="87" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 87</option>
-                <option value="88" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 88</option>
-                <option value="89" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 89</option>
-                <option value="90" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 90</option>
-                <option value="91" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 91</option>
-                <option value="92" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 92</option>
-                <option value="93" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 93</option>
-                <option value="94" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 94</option>
-                <option value="95" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 95</option>
-                <option value="96" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 96</option>
-                <option value="97" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 97</option>
-                <option value="98" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 98</option>
-                <option value="99" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 99</option>
-                <option value="100" style="background: rgb(30, 30, 30); color: rgb(255, 255, 255);">🎵 نغمة أندرويد 100</option>
-            </select>
+            <select id="sound-selector" onchange="saveSound(this.value)" title="اختر نغمة الإشعار" style="flex-shrink: 0; width: max-content; margin-bottom: 0; height: 38px;">
+                </select>
         </div>
         <datalist id="search-history-list"></datalist>
 
@@ -926,8 +864,8 @@
             alert("⚠️ حدث خطأ في النظام:\n" + message);
         };
 
-        // --- نظام الـ 31 ستايل (Themes) ---
-        const themes = [
+        // --- نظام الـ 100 ثيم للغرفة ---
+        const baseThemes = [
             { name: "الافتراضي المظلم", vars: {} },
             { name: "الافتراضي المضيء", vars: { '--bg-color': '#f4f7f6', '--chat-bg': '#ffffff', '--text-dark': '#333', '--msg-bg': '#e3f2fd', '--folder-bg': '#ecf0f1', '--primary': '#4a90e2' } },
             { name: "أزرق ليلي", vars: { '--bg-color': '#0B132B', '--chat-bg': '#1C2541', '--text-dark': '#FFFFFF', '--msg-bg': '#3A506B', '--primary': '#5BC0BE', '--folder-bg': '#2E4057' } },
@@ -961,6 +899,48 @@
             { name: "فيسبوك", vars: { '--bg-color': '#f0f2f5', '--chat-bg': '#ffffff', '--text-dark': '#050505', '--msg-bg': '#e4e6eb', '--primary': '#1877f2', '--folder-bg': '#f0f2f5', '--accent': '#42b72a' } }
         ];
 
+        let themes = [...baseThemes];
+        
+        // استكمال الـ 100 ثيم (69 ثيم إضافي عشان نوصل لـ 100 بالظبط)
+        const hues = [0, 15, 30, 45, 60, 120, 150, 180, 210, 240, 270, 300, 330];
+        const variations = ['مظلم', 'مضيء', 'باستيل', 'نيون', 'داكن جداً'];
+        
+        let counter = 32;
+        for (let v of variations) {
+            for (let h of hues) {
+                if (themes.length >= 100) break;
+                let bg, chat, text, msg, pri, fbg;
+                if (v === 'مظلم') {
+                    bg = `hsl(${h}, 20%, 10%)`; chat = `hsl(${h}, 20%, 15%)`; text = '#eee';
+                    msg = `hsl(${h}, 20%, 25%)`; pri = `hsl(${h}, 70%, 50%)`; fbg = `hsl(${h}, 20%, 20%)`;
+                } else if (v === 'مضيء') {
+                    bg = `hsl(${h}, 30%, 95%)`; chat = '#fff'; text = '#222';
+                    msg = `hsl(${h}, 40%, 90%)`; pri = `hsl(${h}, 70%, 45%)`; fbg = `hsl(${h}, 30%, 85%)`;
+                } else if (v === 'باستيل') {
+                    bg = `hsl(${h}, 60%, 90%)`; chat = `hsl(${h}, 60%, 95%)`; text = '#444';
+                    msg = `hsl(${h}, 60%, 85%)`; pri = `hsl(${h}, 80%, 65%)`; fbg = `hsl(${h}, 60%, 80%)`;
+                } else if (v === 'نيون') {
+                    bg = '#050505'; chat = '#111'; text = `hsl(${h}, 100%, 70%)`;
+                    msg = '#222'; pri = `hsl(${h}, 100%, 50%)`; fbg = '#1a1a1a';
+                } else {
+                    bg = `hsl(${h}, 40%, 5%)`; chat = `hsl(${h}, 40%, 8%)`; text = '#ddd';
+                    msg = `hsl(${h}, 40%, 15%)`; pri = `hsl(${h}, 60%, 40%)`; fbg = `hsl(${h}, 40%, 12%)`;
+                }
+                themes.push({
+                    name: `ثيم ${counter} (${v})`,
+                    vars: { '--bg-color': bg, '--chat-bg': chat, '--text-dark': text, '--msg-bg': msg, '--primary': pri, '--folder-bg': fbg }
+                });
+                counter++;
+            }
+        }
+        
+        while(themes.length < 100) {
+            themes.push({
+                name: `ثيم ${themes.length + 1} (خاص)`,
+                vars: { '--bg-color': '#111', '--chat-bg': '#222', '--text-dark': '#fff', '--msg-bg': '#333', '--primary': '#888', '--folder-bg': '#222' }
+            });
+        }
+
         function applyTheme(index) {
             const theme = themes[index];
             const root = document.documentElement;
@@ -971,6 +951,10 @@
             if(theme.vars) {
                 for(let key in theme.vars) {
                     root.style.setProperty(key, theme.vars[key]);
+                }
+                // Check if light mode
+                if (theme.vars['--bg-color'] && (theme.vars['--bg-color'].includes('95%') || theme.vars['--bg-color'].includes('#f'))) {
+                    document.body.classList.add('light-mode');
                 }
             }
             localStorage.setItem('selected_theme_v9', index);
@@ -1008,6 +992,12 @@
             
             const msgInput = clone.querySelector('#msg-input');
             if(msgInput) msgInput.value = '';
+            
+            // Clean dynamic selects to prevent duplicates
+            const ts = clone.querySelector('#theme-selector');
+            if (ts) ts.innerHTML = '';
+            const ss = clone.querySelector('#sound-selector');
+            if (ss) ss.innerHTML = '';
             
             const htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
@@ -1062,22 +1052,34 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const themeSelector = document.getElementById('theme-selector');
-            themes.forEach((th, idx) => {
-                let opt = document.createElement('option');
-                opt.value = idx;
-                opt.innerText = "🎨 " + th.name;
-                opt.style.background = "#1e1e1e";
-                opt.style.color = "#e0e0e0";
-                themeSelector.appendChild(opt);
-            });
-            const savedTheme = localStorage.getItem('selected_theme_v9');
-            if (savedTheme !== null) {
-                themeSelector.value = savedTheme;
-                applyTheme(savedTheme);
+            if (themeSelector) {
+                themeSelector.innerHTML = ''; 
+                themes.forEach((th, idx) => {
+                    let opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = "🎨 " + th.name;
+                    opt.style.background = "#1e1e1e";
+                    opt.style.color = "#e0e0e0";
+                    themeSelector.appendChild(opt);
+                });
+                const savedTheme = localStorage.getItem('selected_theme_v9');
+                if (savedTheme !== null) {
+                    themeSelector.value = savedTheme;
+                    applyTheme(savedTheme);
+                }
             }
 
             const soundSelector = document.getElementById('sound-selector');
             if (soundSelector) {
+                soundSelector.innerHTML = '';
+                for (let i = 1; i <= 100; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.innerText = i <= 10 ? "🎵 نغمة آيفون " + i : "🎵 نغمة أندرويد " + i;
+                    opt.style.background = "#1e1e1e";
+                    opt.style.color = "#fff";
+                    soundSelector.appendChild(opt);
+                }
                 const savedSound = localStorage.getItem('chat_sound_v10');
                 if (savedSound) {
                     soundSelector.value = savedSound;
@@ -1484,6 +1486,68 @@
             loadMsgs();
             setTimeout(() => { isInitialLoad = false; }, 1500);
         }
+
+        // --- مستخرج الروابط والميديا ---
+        window.extractedDataToCopy = "";
+        window.openExtractor = function() {
+            document.getElementById('extractor-modal').style.display = 'flex';
+            extractLinks('all');
+        }
+
+        window.extractLinks = function(filter) {
+            const resultsContainer = document.getElementById('extractor-results');
+            resultsContainer.innerHTML = '';
+            let items = [];
+            
+            const msgs = document.querySelectorAll('.message-box');
+            msgs.forEach(msg => {
+                const textContent = msg.querySelector('.msg-text-content');
+                if (textContent && (filter === 'all' || filter === 'links')) {
+                    const urls = textContent.innerText.match(/https?:\/\/[^\s]+/g);
+                    if (urls) urls.forEach(u => items.push({ type: 'link', url: u }));
+                }
+                const img = msg.querySelector('.msg-img');
+                if (img && (filter === 'all' || filter === 'media')) {
+                    items.push({ type: 'img', url: img.src });
+                }
+                const fileLink = msg.querySelector('a[data-url]');
+                if (fileLink && (filter === 'all' || filter === 'media' || filter === 'links')) {
+                    items.push({ type: 'file', url: fileLink.dataset.url, name: fileLink.dataset.name });
+                }
+            });
+
+            // مسح التكرار
+            items = items.filter((v, i, a) => a.findIndex(t => (t.url === v.url)) === i);
+            window.extractedDataToCopy = items.map(i => i.url).join('\n');
+
+            if (items.length === 0) {
+                resultsContainer.innerHTML = '<div style="color: #888; text-align: center; margin-top: 20px;">لا توجد روابط أو ميديا في هذا المجلد.</div>';
+                return;
+            }
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.style.padding = '8px';
+                div.style.borderBottom = '1px solid #444';
+                div.style.marginBottom = '5px';
+                div.style.wordBreak = 'break-all';
+                
+                let icon = '🔗';
+                if(item.type === 'img') icon = '🖼️';
+                if(item.type === 'file') icon = '📄';
+                
+                div.innerHTML = `<span style="margin-right: 10px;">${icon}</span> <a href="${item.url}" target="_blank" style="color: var(--primary); text-decoration: none;">${item.url}</a>`;
+                resultsContainer.appendChild(div);
+            });
+        }
+
+        window.copyAllExtracted = function() {
+            if(!window.extractedDataToCopy) return alert('لا يوجد شيء للنسخ!');
+            navigator.clipboard.writeText(window.extractedDataToCopy).then(() => {
+                alert('تم نسخ جميع الروابط بنجاح! ✔️');
+            });
+        }
+        // -----------------------------
 
         function loadSearchHistory() {
             const history = JSON.parse(localStorage.getItem('search_history_v10') || '[]');
