@@ -38,32 +38,49 @@
             transition: background 0.3s;
             overflow: hidden;
         }
+
+        /* --- شريط الأدوات العلوي الجديد --- */
+        #top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--chat-bg);
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 1000;
+            border-bottom: 1px solid #444;
+            overflow-x: auto;
+        }
+        body.light-mode #top-bar { border-bottom: 1px solid #ccc; }
+
         .top-btn { 
-            position: absolute; 
-            top: 20px; 
             padding: 8px 16px; 
             border-radius: 20px; 
             cursor: pointer; 
             border: none; 
             color: white; 
-            z-index: 100; 
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.2s;
+            flex-shrink: 0;
         }
         .top-btn:hover { transform: scale(1.05); }
         
-        #theme-selector { left: 20px; background: var(--primary); outline: none; border: none; appearance: none; text-align: center; padding: 8px 20px; font-family: inherit;}
-        #open-pwa-btn { left: 180px; background: var(--purple); }
-        #open-calc-btn { left: 320px; background: #2c3e50; }
-        #open-html-viewer-btn { left: 470px; background: #e84393; }
-        #open-extractor-btn { left: 620px; background: #e67e22; }
-        #save-page-btn { left: 750px; background: #3498db; }
-        #export-btn { left: 880px; background: #009688; display: none; }
-        #import-btn { left: 1020px; background: #607d8b; display: none; }
-        #orientation-btn { left: 1160px; background: #34495e; }
-        #logout-btn { right: 20px; background: var(--danger); display: none; }
-        #clear-chat-btn { right: 120px; background: var(--warning); display: none; }
+        #theme-selector { background: var(--primary); outline: none; border: none; appearance: none; text-align: center; padding: 8px 20px; font-family: inherit;}
+        #open-pwa-btn { background: var(--purple); }
+        #open-calc-btn { background: #2c3e50; }
+        #open-html-viewer-btn { background: #e84393; }
+        #open-extractor-btn { background: #e67e22; }
+        #save-page-btn { background: #3498db; }
+        #export-btn { background: #009688; display: none; }
+        #import-btn { background: #607d8b; display: none; }
+        #orientation-btn { background: #34495e; }
+        #logout-btn { background: var(--danger); display: none; }
+        #clear-chat-btn { background: var(--warning); display: none; }
         
         #login-screen { 
             background: var(--chat-bg); 
@@ -73,6 +90,7 @@
             max-width: 600px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             box-sizing: border-box;
+            margin-top: 60px;
         }
         
         #chat-screen { 
@@ -83,7 +101,8 @@
             max-width: 1400px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             box-sizing: border-box;
-            height: 95vh; 
+            height: calc(100vh - 80px); 
+            margin-top: 60px;
             display: none; 
             flex-direction: column; 
             position: relative;
@@ -399,7 +418,7 @@
         .pwa-file-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
         .pwa-btn-main { width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s;}
         .pwa-btn-main:hover { background-color: var(--primary-hover); }
-        .pwa-btn-zip { width: 100%; padding: 15px; background-color: var(--warning); color: #000; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .pwa-btn-zip { width: 100%; padding: 15px; background-color: var(--warning); color: #000; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .pwa-file-section { margin-top: 15px; border-bottom: 1px solid #444; padding-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
         body.light-mode .pwa-file-section { border-color: #eee; }
         .pwa-section-title { font-weight: bold; color: var(--text-dark); font-size: 0.9rem;}
@@ -517,21 +536,43 @@
         });
       }
     </script>
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="manifest" href="./manifest.json?v=v1781745153575">
+    <meta name="theme-color" content="#9268ca">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=v1781745153575">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=v1781745153575')
+            .then(reg => console.log('SW Registered'))
+            .catch(err => console.log('SW Failed', err));
+        });
+      }
+    </script>
 </head>
 <body>
 
-    <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"></select>
-    <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'; document.getElementById('cacheVersion').value = 'v' + Date.now();">🛠️ صانع PWA</button>
-    <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
-    <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
-    <button id="open-extractor-btn" class="top-btn" onclick="openExtractor()">🔗 المستخرج</button>
+    <div id="top-bar">
+        <select id="theme-selector" class="top-btn" onchange="applyTheme(this.value)"></select>
+        <button id="open-pwa-btn" class="top-btn" onclick="document.getElementById('pwa-modal').style.display='flex'; document.getElementById('cacheVersion').value = 'v' + Date.now();">🛠️ صانع PWA</button>
+        <button id="open-calc-btn" class="top-btn" onclick="document.getElementById('calc-modal').style.display='flex'">🧮 الآلة الحاسبة</button>
+        <button id="open-html-viewer-btn" class="top-btn" onclick="document.getElementById('html-viewer-modal').style.display='flex'">👁️ عارض HTML</button>
+        <button id="open-extractor-btn" class="top-btn" onclick="openExtractor()">🔗 المستخرج</button>
 
-    <button id="save-page-btn" class="top-btn" onclick="saveWholePageAsHTML()">💾 حفظ الصفحة</button>
-    <button id="export-btn" class="top-btn" onclick="exportData()" style="display: block;">⬇️ تصدير البيانات</button>
-    <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()" style="display: block;">⬆️ استيراد البيانات</button>
-    <button id="orientation-btn" class="top-btn" onclick="toggleOrientation()">🔄 تدوير الشاشة</button>
-    <button id="clear-chat-btn" class="top-btn" style="display: block;">🗑️ مسح المحتوى</button>
-    <button id="logout-btn" class="top-btn" style="display: block;">خروج 🚪</button>
+        <button id="save-page-btn" class="top-btn" onclick="saveWholePageAsHTML()">💾 حفظ الصفحة</button>
+        <button id="export-btn" class="top-btn" onclick="exportData()" style="display: block;">⬇️ تصدير البيانات</button>
+        <button id="import-btn" class="top-btn" onclick="document.getElementById('import-file').click()" style="display: block;">⬆️ استيراد البيانات</button>
+        <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
+        <button id="orientation-btn" class="top-btn" onclick="toggleOrientation()">🔄 تدوير الشاشة</button>
+        
+        <div style="flex-grow: 1;"></div>
+        
+        <button id="clear-chat-btn" class="top-btn" style="display: block;">🗑️ مسح المحتوى</button>
+        <button id="logout-btn" class="top-btn" style="display: block;">خروج 🚪</button>
+    </div>
 
     <div id="lightbox">
         <span id="lightbox-close">×</span>
@@ -1011,6 +1052,45 @@
             URL.revokeObjectURL(url);
         }
 
+        // --- دالة النسخ الذكية الجديدة (Fallback Copy) ---
+        window.copyText = function(text, btn) {
+            let oldText = "";
+            if(btn) { oldText = btn.innerText; btn.innerText = 'جاري النسخ ⏳...'; }
+            
+            function success() {
+                if(btn) { btn.innerText = 'تم النسخ! ✔️'; setTimeout(()=> btn.innerText = oldText, 2500); }
+            }
+            function fail() {
+                if(btn) { btn.innerText = 'فشل ❌'; setTimeout(()=> btn.innerText = oldText, 2500); }
+                alert("❌ تعذر النسخ!");
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(success).catch(() => {
+                    if(fallbackCopyTextToClipboard(text)) success(); else fail();
+                });
+            } else {
+                if(fallbackCopyTextToClipboard(text)) success(); else fail();
+            }
+        };
+
+        window.fallbackCopyTextToClipboard = function(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            let result = false;
+            try {
+                result = document.execCommand('copy');
+            } catch (err) {}
+            document.body.removeChild(textArea);
+            return result;
+        };
+
         let db, roomRef, foldersRef, htmlTabsRef;
         let isInitialLoad = true; 
         window.msgTexts = {}; 
@@ -1225,7 +1305,6 @@
                 input.selectionStart = input.selectionEnd = start + text.length;
                 input.style.height = '100px';
                 input.style.height = (input.scrollHeight) + 'px';
-                // input.focus(); تم تعطيلها لمنع ظهور الكيبورد واهتزاز الشاشة
             } catch (err) {
                 alert('⚠️ مش قادر أوصل للحافظة، اتأكد إنك مدي الصلاحية (Clipboard Permission) للمتصفح.');
             }
@@ -1543,9 +1622,8 @@
 
         window.copyAllExtracted = function() {
             if(!window.extractedDataToCopy) return alert('لا يوجد شيء للنسخ!');
-            navigator.clipboard.writeText(window.extractedDataToCopy).then(() => {
-                alert('تم نسخ جميع الروابط بنجاح! ✔️');
-            });
+            copyText(window.extractedDataToCopy);
+            alert('تم نسخ جميع الروابط بنجاح! ✔️');
         }
         // -----------------------------
 
@@ -1680,11 +1758,7 @@
 
         function copyLiveLink(id, btn) {
             const link = getLiveLinkUrl(id);
-            navigator.clipboard.writeText(link).then(() => {
-                const old = btn.innerText;
-                btn.innerText = "تم النسخ! 🔗";
-                setTimeout(() => btn.innerText = old, 2000);
-            });
+            copyText(link, btn);
         }
 
         function openLiveLink(id) {
@@ -1964,7 +2038,50 @@
                     if (response.ok) { return await response.text(); }
                 } catch (e) { console.warn("Proxy failed, trying next fallback..."); }
             }
+            try {
+                const jsonRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl));
+                if (jsonRes.ok) {
+                    const data = await jsonRes.json();
+                    if (data && data.contents) return data.contents;
+                }
+            } catch (e) {}
             throw new Error("جميع الوسطاء فشلوا في تخطي حماية هذا الموقع بالذات.");
+        }
+
+        async function getFileContent(url) {
+            if (url.startsWith('data:')) {
+                try {
+                    const res = await fetch(url);
+                    return await res.text();
+                } catch(e) {
+                    try {
+                        const parts = url.split(',');
+                        const isBase64 = parts[0].includes('base64');
+                        const dataString = parts.slice(1).join(',');
+                        if (isBase64) {
+                            const binStr = atob(dataString);
+                            const len = binStr.length;
+                            const bytes = new Uint8Array(len);
+                            for (let i = 0; i < len; i++) {
+                                bytes[i] = binStr.charCodeAt(i);
+                            }
+                            return new TextDecoder('utf-8').decode(bytes);
+                        } else {
+                            return decodeURIComponent(dataString);
+                        }
+                    } catch(err) {
+                        throw new Error("فشل فك تشفير الملف المحلي.");
+                    }
+                }
+            } else {
+                try {
+                    const directRes = await fetch(url);
+                    if(!directRes.ok) throw new Error();
+                    return await directRes.text();
+                } catch(e) {
+                    return await fetchContentWithMultiProxies(url);
+                }
+            }
         }
 
         async function fetchAndCopyHTML(id, btn) {
@@ -1973,107 +2090,59 @@
             const urlMatch = text.match(/https?:\/\/[^\s]+/);
             if(!urlMatch) return alert("لا يوجد رابط صالح في الرسالة.");
             
+            const originalText = btn.innerText;
+            btn.innerText = "جاري السحب ⏳...";
             try {
-                const originalText = btn.innerText;
-                btn.innerText = "جاري السحب ⏳...";
-                
-                let html;
-                try {
-                    const directRes = await fetch(urlMatch[0]);
-                    if(!directRes.ok) throw new Error();
-                    html = await directRes.text();
-                } catch(e) {
-                    html = await fetchContentWithMultiProxies(urlMatch[0]);
-                }
-                
-                await navigator.clipboard.writeText(html);
-                btn.innerText = "تم النسخ! ✔️";
-                setTimeout(() => btn.innerText = originalText, 2500);
+                const html = await getFileContent(urlMatch[0]);
+                btn.innerText = originalText;
+                copyText(html, btn);
             } catch (error) {
                 alert("❌ تعذر سحب الرابط.\nالسبب: " + error.message);
                 btn.innerText = "فشل ❌";
-                setTimeout(() => btn.innerText = "سحب ونسخ HTML 🔗", 2500);
+                setTimeout(() => btn.innerText = originalText, 2500);
             }
         }
 
         async function fetchAndCopyFile(url, btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "جاري السحب ⏳...";
             try {
-                const originalText = btn.innerText;
-                btn.innerText = "جاري السحب ⏳...";
-                let textData;
-                try {
-                    const directRes = await fetch(url);
-                    if(!directRes.ok) throw new Error();
-                    textData = await directRes.text();
-                } catch(e) {
-                    textData = await fetchContentWithMultiProxies(url);
-                }
-                await navigator.clipboard.writeText(textData);
-                btn.innerText = "تم النسخ! ✔️";
-                setTimeout(() => btn.innerText = originalText, 2500);
+                const textData = await getFileContent(url);
+                btn.innerText = originalText;
+                copyText(textData, btn);
             } catch (error) {
                 alert("❌ تعذر سحب محتوى الملف.\n" + error.message);
                 btn.innerText = "فشل ❌";
-                setTimeout(() => btn.innerText = "سحب ونسخ الكود", 2500);
+                setTimeout(() => btn.innerText = originalText, 2500);
             }
         }
 
         async function fetchAndCopyTextFile(url, btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "جاري السحب ⏳...";
             try {
-                const originalText = btn.innerText;
-                btn.innerText = "جاري النسخ ⏳...";
-                const res = await fetch(url);
-                const textData = await res.text();
-                await navigator.clipboard.writeText(textData);
-                btn.innerText = "تم النسخ! ✔️";
-                setTimeout(() => btn.innerText = originalText, 2500);
+                const textData = await getFileContent(url);
+                btn.innerText = originalText;
+                copyText(textData, btn);
             } catch (error) {
-                alert("❌ تعذر نسخ محتوى الملف.");
+                alert("❌ تعذر نسخ محتوى الملف.\n" + error.message);
                 btn.innerText = "فشل ❌";
-                setTimeout(() => btn.innerText = "نسخ المحتوى 📋", 2500);
+                setTimeout(() => btn.innerText = originalText, 2500);
             }
         }
 
+        // تم تعديل دالة التنزيل هنا للإسراع وحل مشكلة الدقائق الطويلة
         async function forceDownload(url, filename) {
             try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error();
-                const blob = await res.blob();
-                const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = blobUrl;
+                a.href = url;
                 a.download = filename || 'download';
+                a.target = '_blank';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
             } catch (e) {
-                try {
-                    let success = false;
-                    for (let getProxyUrl of proxyList) {
-                        try {
-                            const proxyRes = await fetch(getProxyUrl(url));
-                            if (proxyRes.ok) {
-                                const blob = await proxyRes.blob();
-                                const blobUrl = URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = blobUrl;
-                                a.download = filename || 'download';
-                                document.body.appendChild(a);
-                                a.click();
-                                document.body.removeChild(a);
-                                URL.revokeObjectURL(blobUrl);
-                                success = true;
-                                break;
-                            }
-                        } catch(err){}
-                    }
-                    if(!success) {
-                        window.open(url, '_blank'); 
-                    }
-                } catch (err) {
-                    window.open(url, '_blank');
-                }
+                window.open(url, '_blank');
             }
         }
 
@@ -2120,7 +2189,7 @@
                 div.innerHTML = `${badgeHtml}<div class="msg-content">${content}</div>
                 <div class="action-row">
                     ${d.type==='text' ? `
-                        <button class="btn-copy" onclick="navigator.clipboard.writeText(\`${d.val.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`); this.innerText='تم!'">نسخ</button>
+                        <button class="btn-copy" onclick="copyText(window.msgTexts['${id}'], this)">نسخ</button>
                         <button class="btn-txt" onclick="downloadTxt('${id}')">حفظ txt 📄</button>
                         <button class="btn-web" onclick="openAsWebsite('${id}')">فتح كموقع 🌐</button>
                         ${isLink ? `<button class="btn-html" onclick="fetchAndCopyHTML('${id}', this)">سحب ونسخ HTML 🔗</button>` : ''}
